@@ -85,15 +85,3 @@ export type Notice = {
 };
 
 // 30분마다 자동 크롤링
-export const startAutoCrawling = () => {
-    // 처음 한 번 실행
-    getScnuNotices();
-    
-    // 30분마다 반복 실행
-    const interval = setInterval(() => {
-        console.log("30분 후 다시 크롤링...");
-        getScnuNotices();
-    }, 30 * 60 * 1000); // 30분 = 1800초 = 1800000ms
-    
-    return interval; // 나중에 clearInterval로 정지 가능
-};
