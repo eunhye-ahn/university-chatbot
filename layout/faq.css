@@ -1,0 +1,174 @@
+/* 작은 FAQ 컨테이너 (기본 상태) - FAQ 버튼 바로 위에 위치 */
+.faq-container-small {
+    position: fixed;
+    left: 35px; /* FAQ 버튼과 같은 위치에서 약간 조정 */
+    bottom: 120px; /* 입력창 위쪽에 위치 */
+    width: 200px;
+    height: 300px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
+
+/* 전체 화면 FAQ (최대화 상태) */
+.faq-fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    z-index: 1001;
+}
+
+/* FAQ 헤더 */
+.faq-header {
+    background-color: #f8f9fa;
+    padding: 8px 12px;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 40px;
+}
+
+.faq-header h3 {
+    margin: 0;
+    font-size: 14px;
+    color: #333;
+}
+
+.faq-fullscreen .faq-header h3 {
+    font-size: 18px;
+}
+
+/* 컨트롤 버튼들 */
+.faq-controls {
+    display: flex;
+    gap: 4px;
+}
+
+.faq-control-btn {
+    width: 20px;
+    height: 20px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    font-size: 12px;
+    transition: background-color 0.2s;
+}
+
+.faq-fullscreen .faq-control-btn {
+    width: 24px;
+    height: 24px;
+    font-size: 14px;
+}
+
+.faq-control-btn:hover {
+    background-color: #e9ecef;
+}
+
+.close-btn:hover {
+    background-color: #dc3545;
+    color: white;
+}
+
+/* FAQ 내용 */
+.faq-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 8px;
+}
+
+.faq-fullscreen .faq-content {
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* FAQ 아이템 */
+.faq-item {
+    border-bottom: 1px solid #e9ecef;
+    margin-bottom: 4px;
+}
+
+.faq-fullscreen .faq-item {
+    margin-bottom: 8px;
+}
+
+.faq-question {
+    padding: 8px 0;
+    cursor: pointer;
+    display: flex;
+    justify-content: flex-start; /* 왼쪽 정렬 */
+    align-items: center;
+    font-weight: 500;
+    color: #333;
+    transition: color 0.2s;
+    font-size: 12px;
+}
+
+.faq-fullscreen .faq-question {
+    padding: 12px 0;
+    font-size: 16px;
+}
+
+.faq-question:hover {
+    color: #007bff;
+    background-color: #f8f9fa;
+    border-radius: 4px;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+/* 스크롤바 스타일 */
+.faq-content::-webkit-scrollbar {
+    width: 4px;
+}
+
+.faq-fullscreen .faq-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.faq-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.faq-content::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+}
+
+.faq-content::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* 작은 FAQ 컨테이너 (기본 상태) - FAQ 버튼 바로 위에 위치 */
+.faq-container-small {
+    position: absolute;
+    left: 0; /* FAQ 버튼과 같은 위치 */
+    bottom: 60px; /* FAQ 버튼 위쪽에 위치 */
+    width: 200px;
+    height: 300px;
+    min-width: 200px; /* 최소 너비 보장 */
+    min-height: 300px; /* 최소 높이 보장 */
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 1000;
+    transition: all 0.3s ease;
+}
