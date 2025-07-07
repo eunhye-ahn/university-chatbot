@@ -12,6 +12,7 @@ openai_api_key = os.getenv("OPENAI_API_KEY")
 #✅ 학사일정 문서 불러오기
 docs = load_haksa_documents()
 
+
 #✅ 출력 확인
 for d in docs:
     print(d.page_content, d.metadata)
