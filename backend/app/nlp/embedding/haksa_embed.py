@@ -1,4 +1,4 @@
-#📌'학사일정'을 gpt가 이해할 수 있도록 벡터화
+#📌'학사일정'을 gpt가 이해할 수 있도록 벡터화 -> pinecone에 저장 
 
 import os
 from dotenv import load_dotenv
@@ -14,8 +14,6 @@ pinecone_api_key = os.getenv("PINECONE_API_KEY")
 
 #✅ Pinecone 연결
 pc = Pinecone(api_key=pinecone_api_key)
-
-# ✅ Pinecone Index 이름
 index_name = "university-chatbot"
 
 #✅ 학사일정 문서 불러오기

@@ -2,9 +2,9 @@
 
 import requests
 from datetime import datetime
-from langchain_core.documents import Document
+from langchain.schema import Document
 
-# ✅ 전체 학사일정 데이터를 LangChain 문서로 변환
+# ✅ 학사일정 데이터를 LangChain 문서로 변환
 def load_haksa_documents():
     url = "https://www.scnu.ac.kr/haksa/sv/schdulView/selectSvList.do"
     response = requests.post(url, data={"sysId": "SCNU"})
