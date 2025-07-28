@@ -1,5 +1,5 @@
 // import { useState } from 'react';
-import './header.css';
+import '../style/header.css';
 
 // Props 타입 정의
 interface HeaderProps {
