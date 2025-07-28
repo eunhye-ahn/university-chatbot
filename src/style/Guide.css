@@ -1,0 +1,136 @@
+/* Guide 컴포넌트 스타일 - Tailwind @apply 지시어 사용 */
+
+/* 이용안내 버튼 */
+.guide-button {
+  @apply fixed bottom-8 right-8 w-16 h-16 bg-green-200 hover:bg-green-600 text-white rounded-full shadow-lg transition-all duration-300 hover:scale-110 z-40 flex items-center justify-center;
+}
+
+.guide-button-icon {
+  @apply w-10 h-10 object-contain group-hover:scale-105 transition-transform duration-200;
+}
+
+.guide-button-svg {
+  @apply w-8 h-8 group-hover:scale-105 transition-transform duration-200;
+}
+
+/* 모달 오버레이 */
+.guide-overlay {
+  @apply fixed inset-0 bg-black/40 flex items-center justify-center z-50 transition-opacity duration-300;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.guide-modal {
+  @apply bg-white rounded-2xl p-8 max-w-lg w-full mx-4 text-gray-800 shadow-2xl transform transition-all duration-300 scale-100;
+  animation: slideIn 0.3s ease-out;
+}
+
+/* 모달 헤더 */
+.guide-header {
+  @apply flex items-center justify-between mb-6;
+}
+
+.guide-title {
+  @apply text-2xl font-bold text-gray-800;
+}
+
+.guide-close-button {
+  @apply text-gray-500 hover:text-gray-700 transition-colors p-1 rounded-lg hover:bg-gray-100;
+}
+
+.guide-close-icon {
+  @apply w-6 h-6;
+}
+
+/* 모달 내용 */
+.guide-content {
+  @apply space-y-4 text-gray-600;
+}
+
+.guide-info-section {
+  @apply border-l-4 pl-4;
+}
+
+.guide-info-blue {
+  @apply border-blue-400;
+}
+
+.guide-info-green {
+  @apply border-green-400;
+}
+
+.guide-info-yellow {
+  @apply border-yellow-400;
+}
+
+.guide-info-purple {
+  @apply border-purple-400;
+}
+
+.guide-info-red {
+  @apply border-red-400;
+}
+
+.guide-info-title {
+  @apply font-semibold text-gray-800 mb-2 flex items-center;
+}
+
+.guide-emoji {
+  @apply mr-2;
+}
+
+.guide-info-text {
+  @apply leading-relaxed;
+}
+
+/* 모달 푸터 */
+.guide-footer {
+  @apply mt-8 flex justify-end space-x-3;
+}
+
+.guide-confirm-button {
+  @apply bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg transition-colors duration-200 font-medium shadow-md hover:shadow-lg;
+}
+
+/* 커스텀 애니메이션 (Tailwind에 없는 것들) */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .guide-button {
+    @apply bottom-6 right-6 w-14 h-14;
+  }
+  
+  .guide-button-svg {
+    @apply w-7 h-7;
+  }
+  
+  .guide-button-icon {
+    @apply w-9 h-9;
+  }
+  
+  .guide-modal {
+    @apply mx-2 p-6;
+  }
+  
+  .guide-title {
+    @apply text-xl;
+  }
+}

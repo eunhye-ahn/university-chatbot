@@ -1,4 +1,4 @@
-import './notice.css';
+import '../style/notice.css';
 import { useNotices } from '../hooks/useNotices';
 
 const Notice = () => {

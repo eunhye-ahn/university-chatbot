@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import './faq.css';
+import '../style/faq.css';
 
 interface FAQProps {
     isOpen: boolean;

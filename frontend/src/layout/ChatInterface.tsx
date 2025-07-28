@@ -1,16 +1,30 @@
 import { useState, useEffect, useRef } from 'react';
-import './ChatInterface.css';
-import FAQ from './faq'; // FAQ 컴포넌트 import 추가
+import '../style/ChatInterface.css';
+import '../style/FAQ-additions.css';
+import '../style/AutoComplete.css';
+import FAQ from '../../src/layout/faq';
+import FAQChatResponse from './faqChat';
+import AutoComplete, { type AutoCompleteRef } from './AutoComplete';
+import { fetchFAQData } from '../service/faqServices';
 
-// 메시지 타입 정의
+// 📝 메시지 타입 정의
 interface Message {
     sender: string;
     text: string;
     time: string;
     isError?: boolean;
+    type?: 'regular' | 'faq';
+    faqOptions?: string[];
 }
 
-// 현재 시간 가져오기 함수
+// FAQ 세부 항목 타입 (FAQ.tsx와 동일)
+interface FAQSubItem {
+    text: string;
+    index: number;
+    parentId: number;
+}
+
+// ⏰ 현재 시간을 오전/오후 형식으로 변환
 const getCurrentTime = () => {
     const now = new Date();
     const hours = now.getHours();
@@ -20,130 +34,243 @@ const getCurrentTime = () => {
     return `${ampm} ${displayHours}:${minutes.toString().padStart(2, '0')}`;
 };
 
-// Props 타입 정의
 interface ChatInterfaceProps {
     messages: Message[];
     setMessages: (messages: Message[]) => void;
 }
 
 const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
+    // 🔧 기본 상태 관리
     const [message, setMessage] = useState('');
     const [isTyping, setIsTyping] = useState(false);
-    const [showFAQ, setShowFAQ] = useState(false); // FAQ 상태 추가
-    const [autoInput, setAutoInput] = useState(false); // 자동 입력 토글 상태 추가
+    const [showFAQ, setShowFAQ] = useState(false);
+    const [autoInput, setAutoInput] = useState(false);
+    
+    // 📍 참조 객체들
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const autoCompleteRef = useRef<AutoCompleteRef>(null);
 
-    // 메시지가 추가될 때마다 자동 스크롤
+    // 🔄 메시지 추가 시 자동 스크롤
     useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+        if (messagesEndRef.current) {
+            messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
     }, [messages, isTyping]);
 
-    // 봇 응답 시뮬레이션 함수 (에러 처리 포함)
+    // 🤖 챗봇 응답 시뮬레이션 (DB 연결 전까지 임시)
     const simulateBotResponse = async (userMessage: string, currentMessages: Message[]) => {
         setIsTyping(true);
         
         try {
-            // 실제로는 여기서 API 호출을 할 수 있습니다
-            await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000)); // 1-3초 대기
+            // 응답 지연 시뮬레이션
+            await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
             
-            // 10% 확률로 에러 시뮬레이션 (테스트용)
+            // 랜덤 네트워크 오류 시뮬레이션
             if (Math.random() < 0.1) {
                 throw new Error('네트워크 오류가 발생했습니다.');
             }
             
-            // 성공적인 응답
-            const botResponse = `"${userMessage}"에 대한 답변입니다!`;
+            // 키워드 기반 맞춤 응답 생성
+            const getBotResponse = (message: string): string => {
+                const lowerMessage = message.toLowerCase();
+                
+                if (lowerMessage.includes('주문 취소')) {
+                    return '주문 취소를 도와드리겠습니다. 주문번호를 알려주시면 취소 처리해드릴게요.';
+                } else if (lowerMessage.includes('주문 확인')) {
+                    return '주문 확인을 위해 주문번호나 휴대폰 번호를 입력해주세요.';
+                } else if (lowerMessage.includes('배송 조회')) {
+                    return '배송 조회를 위해 주문번호를 입력해주시거나 로그인 후 마이페이지에서 확인 가능합니다.';
+                } else if (lowerMessage.includes('반품')) {
+                    return '반품 신청을 도와드리겠습니다. 주문번호와 반품 사유를 알려주세요.';
+                } else if (lowerMessage.includes('교환')) {
+                    return '교환 신청을 접수하겠습니다. 주문번호와 교환하고 싶은 상품 정보를 알려주세요.';
+                } else if (lowerMessage.includes('결제')) {
+                    return '결제 관련 문의사항을 도와드리겠습니다. 어떤 결제 문제가 있으신가요?';
+                } else if (lowerMessage.includes('로그인')) {
+                    return '로그인에 문제가 있으시군요. 아이디/비밀번호 찾기나 계정 관련 도움이 필요하시면 말씀해주세요.';
+                } else if (lowerMessage.includes('상품 문의')) {
+                    return '상품에 대해 궁금한 점이 있으시군요. 어떤 상품에 대해 알고 싶으신가요?';
+                } else if (lowerMessage.includes('고객센터')) {
+                    return '고객센터 운영시간은 평일 오전 9시부터 오후 6시까지입니다. 전화번호: 1588-0000';
+                } else {
+                    return `"${userMessage}"에 대한 답변입니다!`;
+                }
+            };
+            
+            const botResponse = getBotResponse(userMessage);
+            
             setMessages([...currentMessages, { 
                 sender: '봇', 
                 text: botResponse, 
-                time: getCurrentTime() 
+                time: getCurrentTime(),
+                type: 'regular' as const
             }]);
             
         } catch (error) {
-            // 에러 처리
             const errorMessage = error instanceof Error ? error.message : '알 수 없는 오류가 발생했습니다.';
             setMessages([...currentMessages, { 
                 sender: '봇', 
                 text: `오류: ${errorMessage}`, 
                 time: getCurrentTime(),
-                isError: true
+                isError: true,
+                type: 'regular' as const
             }]);
         } finally {
             setIsTyping(false);
         }
     };
 
+    // 📤 일반 메시지 전송 처리
     const handleSend = () => {
         const currentTime = getCurrentTime();
 
-        // 타이핑 중이거나 메시지가 비어있으면 전송하지 않음
         if (message.trim() && !isTyping) {
-            // 사용자 메시지 추가
-            const newMessages = [...messages, { sender: '나', text: message, time: currentTime }];
+            const newMessages = [...messages, { 
+                sender: '나', 
+                text: message, 
+                time: currentTime,
+                type: 'regular' as const
+            }];
             setMessages(newMessages);
             
-            // 봇 응답 시뮬레이션
             simulateBotResponse(message, newMessages);
-            
-            setMessage(''); // 입력창 초기화
+            setMessage('');
         }
     };
 
-    // FAQ에서 메시지를 받아서 사용자 질문 + 봇 응답으로 추가하는 함수
-    const handleFAQMessage = (faqTitle: string, faqResponse: string) => {
-        // 타이핑 중이면 FAQ 클릭 무시
+    // 🔍 자동완성 선택 처리 (입력창에만 채우기)
+    const handleAutoCompleteSelect = (suggestion: string) => {
+        setMessage(suggestion);
+        autoCompleteRef.current?.focus();
+    };
+
+    // ⚡ 자동완성 바로 전송 처리
+    const handleAutoCompleteAutoSend = (suggestion: string) => {
+        if (isTyping) return;
+
+        const currentTime = getCurrentTime();
+        const newMessages = [...messages, { 
+            sender: '나', 
+            text: suggestion, 
+            time: currentTime,
+            type: 'regular' as const
+        }];
+        setMessages(newMessages);
+        
+        simulateBotResponse(suggestion, newMessages);
+    };
+
+    // ❓ FAQ 메시지 처리 (메인 카테고리)
+    const handleFAQMessage = async (faqTitle: string, faqId: number) => {
         if (isTyping) return;
         
         const currentTime = getCurrentTime();
-        
-        // 먼저 사용자가 질문한 것처럼 메시지 추가
-        const userMessage = { 
+        const userMessage: Message = { 
             sender: '나', 
             text: faqTitle, 
-            time: currentTime 
+            time: currentTime,
+            type: 'regular' as const
         };
         
-        // 사용자 메시지를 먼저 추가
+        const messagesWithUser = [...messages, userMessage];
+        setMessages(messagesWithUser);
+        setIsTyping(true);
+        
+        try {
+            const faqData = await fetchFAQData(faqId);
+            setIsTyping(false);
+            
+            const botMessage: Message = {
+                sender: '봇',
+                text: faqData.response,
+                time: getCurrentTime(),
+                type: 'faq' as const,
+                faqOptions: faqData.options
+            };
+            
+            setMessages([...messagesWithUser, botMessage]);
+            
+        } catch (error) {
+            setIsTyping(false);
+            
+            const errorMessage: Message = {
+                sender: '봇',
+                text: 'FAQ 데이터를 불러오는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+                time: getCurrentTime(),
+                isError: true,
+                type: 'regular' as const
+            };
+            
+            setMessages([...messagesWithUser, errorMessage]);
+        }
+    };
+
+    // 🔘 FAQ 세부 항목 클릭 처리 (새로 추가)
+    const handleFAQSubItemClick = async (subItem: FAQSubItem) => {
+        if (isTyping) return;
+        
+        const currentTime = getCurrentTime();
+        const userMessage: Message = { 
+            sender: '나', 
+            text: subItem.text, 
+            time: currentTime,
+            type: 'regular' as const
+        };
+        
         const messagesWithUser = [...messages, userMessage];
         setMessages(messagesWithUser);
         
-        // 타이핑 인디케이터 표시
-        setIsTyping(true);
-        
-        // 잠시 후 봇 응답 추가 (실제 대화처럼 보이도록)
-        setTimeout(() => {
-            setIsTyping(false);
-            const botMessage = { 
-                sender: '봇', 
-                text: faqResponse, 
-                time: getCurrentTime() 
-            };
-            setMessages([...messagesWithUser, botMessage]);
-        }, 1000 + Math.random() * 1000); // 1-2초 대기
+        // 기존 simulateBotResponse와 동일한 방식으로 처리
+        simulateBotResponse(subItem.text, messagesWithUser);
     };
 
+    // 🔘 FAQ 옵션 버튼 클릭 처리
+    const handleFAQOptionClick = (option: string) => {
+        if (isTyping) return;
+        
+        const currentTime = getCurrentTime();
+        const userMessage: Message = { 
+            sender: '나', 
+            text: option, 
+            time: currentTime,
+            type: 'regular' as const
+        };
+        
+        const messagesWithUser = [...messages, userMessage];
+        setMessages(messagesWithUser);
+        
+        simulateBotResponse(option, messagesWithUser);
+    };
+
+    // ⌨️ 키보드 입력 처리 (Claude 스타일)
     const handleKeyDown = (e: React.KeyboardEvent) => {
-        // 타이핑 중일 때는 Enter 키 무시
-        if (e.key === 'Enter' && !isTyping) {
+        if (e.key === 'Enter' && !e.shiftKey && !isTyping) {
+            e.preventDefault(); // 줄바꿈 방지
             handleSend();
         }
+        // Shift+Enter는 줄바꿈 허용
+    };
+
+    // 🔄 자동완성 토글 처리
+    const handleAutoInputToggle = () => {
+        setAutoInput(!autoInput);
     };
 
     return (
         <div className="chat-container">
-            {/* 환영사진 - 메시지가 없을 때만 보임 (채팅기록창과 동일한 크기) */}
+            {/* 🎉 환영사진 - 메시지가 없을 때만 표시 */}
             {messages.length === 0 && (
                 <div className='welcome-photo'>
                     <a>환영사진 들어갈 곳</a>
                 </div>
             )}
             
-            {/* 💬 채팅 메시지 구역 - 메시지가 있을 때만 보임 */}
+            {/* 💬 채팅 메시지 구역 */}
             {messages.length > 0 && (
                 <div className="chat-messages">
                     {messages.map((msg, index) => (
                         <div key={index} className={`message-row ${msg.sender === '나' ? 'my-message-row' : 'bot-message-row'}`}>
-                            {/* 봇 메시지일 때만 프로필과 이름 */}
+                            {/* 🤖 봇 프로필과 이름 */}
                             {msg.sender === '봇' && (
                                 <div className="profile-and-name">
                                     <div className="profile-image">🤖</div>
@@ -151,17 +278,30 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
                                 </div>
                             )}
                             
-                            {/* 메시지와 시간은 프로필 아래에 */}
+                            {/* 💭 메시지 내용 */}
                             <div className="message-content-below">
-                                <div className={`message-bubble ${msg.sender === '나' ? 'my-bubble' : msg.isError ? 'error-bubble' : 'bot-bubble'}`}>
-                                    {msg.text}
-                                </div>
+                                {msg.type === 'faq' ? (
+                                    <FAQChatResponse 
+                                        message={msg} 
+                                        onOptionSelect={handleFAQOptionClick}
+                                    />
+                                ) : (
+                                    <div className={`message-bubble ${
+                                        msg.sender === '나' 
+                                            ? 'my-bubble' 
+                                            : msg.isError 
+                                                ? 'error-bubble' 
+                                                : 'bot-bubble'
+                                    }`}>
+                                        {msg.text}
+                                    </div>
+                                )}
                                 <div className="message-time">{msg.time}</div>
                             </div>
                         </div>
                     ))}
                     
-                    {/* 타이핑 인디케이터 */}
+                    {/* ⏳ 타이핑 인디케이터 */}
                     {isTyping && (
                         <div className="message-row bot-message-row">
                             <div className="profile-and-name">
@@ -180,46 +320,52 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
                         </div>
                     )}
                     
-                    {/* 스크롤 타겟 지점 */}
                     <div ref={messagesEndRef} />
                 </div>
             )}
             
-            {/* ⌨️ 입력 구역 - 항상 표시 */}
+            {/* 📝 입력 구역 */}
             <div className="chat-input">
-                {/* FAQ 버튼과 메뉴를 함께 묶는 컨테이너 */}
+                {/* ❓ FAQ 버튼 */}
                 <div className="faq-wrapper">
                     <button 
                         onClick={() => setShowFAQ(true)} 
                         className="faq-button"
                         title="자주 묻는 질문"
-                        disabled={isTyping} // 타이핑 중일 때 FAQ 버튼 비활성화
+                        disabled={isTyping}
                     >
                         ?
                     </button>
-                    {/* FAQ 컴포넌트를 버튼과 같은 래퍼 안에 배치 */}
                     <FAQ 
                         isOpen={showFAQ} 
                         onClose={() => setShowFAQ(false)}
                         onSendMessage={handleFAQMessage}
+                        onSubItemClick={handleFAQSubItemClick}
                     />
                 </div>
+                
+                {/* 🔍 입력창과 자동완성 */}
                 <div className="input-container">
-                    <input 
-                        type="text" 
+                    <AutoComplete 
+                        ref={autoCompleteRef}
                         value={message}
-                        onChange={(e) => setMessage(e.target.value)}
+                        onChange={setMessage}
+                        onSelect={handleAutoCompleteSelect}
                         onKeyDown={handleKeyDown}
-                        placeholder={isTyping ? "챗봇이 응답 중입니다..." : "메시지를 입력하고 Enter를 누르세요..."}
-                        className="message-input"
-                        disabled={isTyping} // 타이핑 중일 때 입력 비활성화
+                        placeholder={isTyping ? "챗봇이 응답 중입니다..." : "메시지를 입력하세요... (Enter: 전송, Shift+Enter: 줄바꿈)"}
+                        disabled={isTyping}
+                        autoInputEnabled={autoInput}
+                        className="input-wrapper"
+                        autoSend={true}
+                        onAutoSend={handleAutoCompleteAutoSend}
                     />
-                    {/* 자동 입력 토글 스위치 */}
+                    
+                    {/* 🔄 자동입력 토글 */}
                     <div className="auto-input-controls">
                         <span className="auto-input-label">자동입력</span>
                         <div 
                             className={`toggle-switch ${autoInput ? 'active' : ''}`}
-                            onClick={() => setAutoInput(!autoInput)}
+                            onClick={handleAutoInputToggle}
                         >
                             <div className="toggle-circle"></div>
                         </div>
