@@ -293,8 +293,8 @@
 }
 
 .toggle-circle {
-    width: 14px; /* 12px → 14px */
-    height: 14px; /* 12px → 14px */
+    width: 14px;
+    height: 14px;
     background-color: white;
     border-radius: 50%;
     position: absolute;
