@@ -1,122 +1,170 @@
-import { useState } from 'react';
-import '../style/faq.css';
+import { useState, useEffect } from 'react';
+import { FAQ_ITEMS, fetchFAQData } from '../service/faqServices';
+import type { FAQResponse } from '../service/faqServices';
 
+// 세부 항목 정보 타입 (DB 연동 시 확장 예정)
+interface FAQSubItem {
+    text: string;
+    index: number;
+    parentId: number;
+    // 추후 DB 연동 시 추가될 필드들:
+    // subItemId?: number;
+    // category?: string;
+    // priority?: number;
+}
+
+// Props 타입 정의
 interface FAQProps {
     isOpen: boolean;
     onClose: () => void;
-    onSendMessage: (title: string, response: string) => void; // 제목과 응답을 모두 전달
+    onSendMessage: (title: string, id: number) => void;
+    onSubItemClick: (subItem: FAQSubItem) => void; // 세부 항목 클릭 처리
 }
 
-const FAQ = ({ isOpen, onClose, onSendMessage }: FAQProps) => {
+const FAQ: React.FC<FAQProps> = ({ isOpen, onClose, onSendMessage, onSubItemClick }) => {
     const [isMaximized, setIsMaximized] = useState(false);
+    const [faqData, setFaqData] = useState<Record<number, FAQResponse>>({});
+    const [loadingStates, setLoadingStates] = useState<Record<number, boolean>>({});
 
-    // FAQ 메뉴 데이터
-    const faqItems = [
-        { id: 1, title: "챗봇 사용법", response: "안녕하세요! 저는 AI 챗봇입니다. 궁금한 것이 있으시면 언제든 질문해 주세요. 텍스트로 대화하실 수 있으며, 다양한 주제에 대해 도움을 드릴 수 있습니다." },
-        { id: 2, title: "계정 관리", response: "계정 관리에 관한 도움이 필요하시군요. 계정 설정 변경, 비밀번호 재설정, 프로필 수정 등에 대해 안내해 드릴 수 있습니다. 구체적으로 어떤 부분이 궁금하신가요?" },
-        { id: 3, title: "기술적 문제", response: "기술적 문제가 발생하셨나요? 로그인 문제, 화면 표시 오류, 기능 작동 불량 등 다양한 기술적 이슈에 대해 해결 방법을 안내해 드리겠습니다." },
-        { id: 4, title: "서비스 이용약관", response: "서비스 이용약관에 대해 궁금하신 점이 있으시군요. 서비스 이용 규칙, 사용자 권리와 의무, 제한사항 등에 대해 자세히 설명해 드릴 수 있습니다." },
-        { id: 5, title: "개인정보 처리방침", response: "개인정보 처리방침에 대해 안내해 드리겠습니다. 개인정보 수집 및 이용, 보관 기간, 제3자 제공, 개인정보 보호 조치 등에 대한 내용을 확인하실 수 있습니다." },
-        { id: 6, title: "결제 및 환불", response: "결제 및 환불 정책에 대해 궁금하신가요? 결제 방법, 요금제, 환불 절차, 환불 조건 등에 대해 상세히 안내해 드리겠습니다." },
-        { id: 7, title: "문의하기", response: "추가 문의사항이 있으시면 언제든 연락해 주세요. 이메일, 전화, 온라인 채팅 등 다양한 방법으로 문의하실 수 있으며, 빠른 시간 내에 답변해 드리겠습니다." },
-        { id: 8, title: "업데이트 정보", response: "최신 업데이트 정보를 확인하고 싶으시군요. 새로운 기능 추가, 성능 개선, 버그 수정 등 최근 업데이트 내역에 대해 안내해 드릴 수 있습니다." },
-        { id: 9, title: "자주 묻는 질문", response: "자주 묻는 질문들을 정리해 드릴게요. 가장 많이 문의하시는 내용들과 그에 대한 답변을 제공해 드리겠습니다. 다른 궁금한 점도 언제든 물어보세요!" }
-    ];
+    // FAQ 데이터 로드 함수 (에러 처리 및 로딩 상태 개선)
+    const loadFAQData = async (faqId: number) => {
+        if (faqData[faqId] || loadingStates[faqId]) return;
 
-    const handleMaximize = () => {
-        setIsMaximized(true);
+        setLoadingStates(prev => ({ ...prev, [faqId]: true }));
+        
+        try {
+            const data = await fetchFAQData(faqId);
+            setFaqData(prev => ({ ...prev, [faqId]: data }));
+        } catch (error) {
+            console.error(`FAQ ${faqId} 데이터 로드 실패:`, error);
+            // 에러 상태도 관리할 수 있도록 추후 확장 가능
+        } finally {
+            setLoadingStates(prev => ({ ...prev, [faqId]: false }));
+        }
     };
 
-    const handleMinimize = () => {
-        setIsMaximized(false);
+    // FAQ 세부 옵션 가져오기
+    const getSubItems = (faqId: number): string[] => {
+        const data = faqData[faqId];
+        return data?.options || [];
     };
 
-    const handleClose = () => {
-        setIsMaximized(false);
+    // 최대화 시 모든 FAQ 데이터 미리 로드
+    useEffect(() => {
+        if (isMaximized) {
+            FAQ_ITEMS.forEach(item => {
+                loadFAQData(item.id);
+            });
+        }
+    }, [isMaximized]);
+
+    // FAQ 메인 카테고리 클릭 처리
+    const handleFAQClick = (title: string, id: number) => {
+        onSendMessage(title, id);
         onClose();
     };
 
-    const handleFAQClick = (item: { id: number; title: string; response: string }) => {
-        onSendMessage(item.title, item.response);
-        // FAQ 창을 닫지 않고 유지
+    // 세부 항목 클릭 처리 (DB 연동 대비 구조화된 데이터 전달)
+    const handleSubItemClick = (optionText: string, parentId: number, optionIndex: number) => {
+        const subItemData: FAQSubItem = {
+            text: optionText,
+            index: optionIndex,
+            parentId: parentId,
+            // 추후 DB 연동 시 추가 정보:
+            // subItemId: calculateSubItemId(parentId, optionIndex),
+            // category: getParentCategory(parentId),
+            // priority: getOptionPriority(optionText)
+        };
+
+        onSubItemClick(subItemData);
+        onClose();
     };
 
     if (!isOpen) return null;
 
     return (
-        <>
-            {/* 최대화된 경우 전체 화면 */}
-            {isMaximized ? (
-                <div className="faq-fullscreen">
-                    <div className="faq-header">
-                        <h3>자주 묻는 질문</h3>
-                        <div className="faq-controls">
-                            <button 
-                                className="faq-control-btn minimize-btn" 
-                                onClick={handleMinimize}
-                                title="최소화"
-                            >
-                                ⊟
-                            </button>
-                            <button 
-                                className="faq-control-btn close-btn" 
-                                onClick={handleClose}
-                                title="닫기"
-                            >
-                                ✕
-                            </button>
-                        </div>
-                    </div>
-                    <div className="faq-content">
-                        {faqItems.map((item) => (
-                            <div key={item.id} className="faq-item">
+        <div className={isMaximized ? 'faq-fullscreen' : 'faq-container-small'}>
+            {/* 헤더 */}
+            <div className="faq-header">
+                <h3>자주 묻는 질문 (FAQ)</h3>
+                <div className="faq-controls">
+                    <button 
+                        className="faq-control-btn"
+                        onClick={() => setIsMaximized(!isMaximized)}
+                        title={isMaximized ? "창 크기 줄이기" : "창 최대화"}
+                    >
+                        {isMaximized ? '🗗' : '🗖'}
+                    </button>
+                    <button 
+                        className="faq-control-btn close-btn"
+                        onClick={onClose}
+                        title="닫기"
+                    >
+                        ✕
+                    </button>
+                </div>
+            </div>
+
+            {/* FAQ 내용 */}
+            <div className="faq-content">
+                {FAQ_ITEMS.map((item, index) => {
+                    const subItems = getSubItems(item.id);
+                    const isLoading = loadingStates[item.id];
+                    
+                    return (
+                        <div key={item.id}>
+                            <div className="faq-item">
                                 <div 
-                                    className="faq-question" 
-                                    onClick={() => handleFAQClick(item)}
+                                    className="faq-question"
+                                    onClick={() => handleFAQClick(item.title, item.id)}
                                 >
-                                    <span>{item.title}</span>
+                                    {isMaximized ? (
+                                        <div>
+                                            <div className="faq-title">
+                                                {item.title}
+                                            </div>
+                                            <div className="faq-description">
+                                                {item.description}
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        item.title
+                                    )}
                                 </div>
                             </div>
-                        ))}
-                    </div>
-                </div>
-            ) : (
-                /* 최소화된 경우 작은 창 */
-                <div className="faq-container-small">
-                    <div className="faq-header">
-                        <h3>FAQ</h3>
-                        <div className="faq-controls">
-                            <button 
-                                className="faq-control-btn maximize-btn" 
-                                onClick={handleMaximize}
-                                title="최대화"
-                            >
-                                ⛶
-                            </button>
-                            <button 
-                                className="faq-control-btn close-btn" 
-                                onClick={handleClose}
-                                title="닫기"
-                            >
-                                ✕
-                            </button>
-                        </div>
-                    </div>
-                    <div className="faq-content">
-                        {faqItems.map((item) => (
-                            <div key={item.id} className="faq-item">
-                                <div 
-                                    className="faq-question" 
-                                    onClick={() => handleFAQClick(item)}
-                                >
-                                    <span>{item.title}</span>
+
+                            {/* 최대화 화면에서만 세부 항목들 표시 */}
+                            {isMaximized && (
+                                <div className="faq-sub-section">
+                                    {isLoading ? (
+                                        <div className="faq-loading">로딩 중...</div>
+                                    ) : subItems.length > 0 ? (
+                                        <div className="faq-sub-items">
+                                            {subItems.map((optionText, subIndex) => (
+                                                <button
+                                                    key={`${item.id}-${subIndex}`}
+                                                    className="faq-sub-item-btn"
+                                                    onClick={() => handleSubItemClick(optionText, item.id, subIndex)}
+                                                >
+                                                    [{optionText}]
+                                                </button>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <div className="faq-no-options">세부 옵션이 없습니다.</div>
+                                    )}
                                 </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            )}
-        </>
+                            )}
+
+                            {/* 구분선 (마지막 항목이 아닐 때만) */}
+                            {isMaximized && index < FAQ_ITEMS.length - 1 && (
+                                <hr className="faq-divider" />
+                            )}
+                        </div>
+                    );
+                })}
+            </div>
+        </div>
     );
 };
 

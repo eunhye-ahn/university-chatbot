@@ -28,7 +28,7 @@ const FAQChatResponse: React.FC<FAQChatResponseProps> = ({ message, onOptionSele
             <div className="faq-response-text">
                 {message.text}
             </div>
-            
+
             {/* FAQ 옵션 버튼들 */}
             {message.faqOptions && message.faqOptions.length > 0 && (
                 <div className="faq-options">
