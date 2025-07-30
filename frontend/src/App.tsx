@@ -3,6 +3,7 @@ import Header from './layout/header';
 //import Footer from './layout/Footer';
 import ChatInterface from './layout/ChatInterface';
 import Notice from './layout/notice';
+import Guide from './layout/Guide'
 import './App.css';
 
 interface Message {
@@ -25,6 +26,7 @@ const App = () => {
             <Header onResetChat={resetChat} />
             <Notice />
             <ChatInterface messages={messages} setMessages={setMessages} />  
+            <Guide />
         </div>
     );
 };
