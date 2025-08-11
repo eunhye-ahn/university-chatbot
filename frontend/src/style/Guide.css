@@ -9,128 +9,172 @@
   @apply w-10 h-10 object-contain group-hover:scale-105 transition-transform duration-200;
 }
 
-.guide-button-svg {
-  @apply w-8 h-8 group-hover:scale-105 transition-transform duration-200;
+/* ===== 모드 1: 이미지 모달 + 좌우 버튼 ===== */
+
+/* 모달 오버레이 배경 */
+.guide-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
 }
 
-/* 모달 오버레이 */
-.guide-overlay {
-  @apply fixed inset-0 bg-black/40 flex items-center justify-center z-50 transition-opacity duration-300;
-  animation: fadeIn 0.3s ease-out;
+/* 이미지 모달 컨테이너 (메인 컨텐츠) */
+.guide-image-container {
+    position: relative;
+    max-width: 500px;
+    width: 100%;
+    height: auto;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: white; /* 이미지 로딩 중 배경 */
 }
 
-.guide-modal {
-  @apply bg-white rounded-2xl p-8 max-w-lg w-full mx-4 text-gray-800 shadow-2xl transform transition-all duration-300 scale-100;
-  animation: slideIn 0.3s ease-out;
+/* 메인 이미지 스타일 */
+.guide-main-image {
+    width: 100%;
+    height: auto;
+    display: block;
 }
 
-/* 모달 헤더 */
-.guide-header {
-  @apply flex items-center justify-between mb-6;
+/* 오버레이 우측 최상단 고정 닫기 버튼 */
+.guide-overlay-close-fixed {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    color: white;
+    font-size: 1.4rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 100;
 }
 
-.guide-title {
-  @apply text-2xl font-bold text-gray-800;
+.guide-overlay-close-fixed:hover {
+    background: rgba(0, 0, 0, 0.8);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: scale(1.1);
 }
 
-.guide-close-button {
-  @apply text-gray-500 hover:text-gray-700 transition-colors p-1 rounded-lg hover:bg-gray-100;
+/* 이미지 로드 실패 시 fallback */
+.guide-image-fallback {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem;
+    z-index: 1;
+}
+
+.guide-image-fallback h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: #374151;
+}
+
+.guide-image-fallback p {
+    font-size: 1rem;
+    color: #6b7280;
+    margin: 0;
+}
+
+/* 좌우 네비게이션 버튼 - 흰색 박스에서 약 5cm(190px) 거리 */
+.guide-nav-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    color: #374151;
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.guide-nav-button:hover {
+    background-color: white;
+    border-color: rgba(0, 0, 0, 0.2);
+    transform: translateY(-50%) scale(1.05);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.guide-nav-left {
+    left: 120px; /* 흰색 박스에서 약 5cm 거리 */
+}
+
+.guide-nav-right {
+    right: 120px; /* 흰색 박스에서 약 5cm 거리 */
+}
+
+/* ===== 모드 2: 검은색 오버레이만 ===== */
+
+/* 단순 오버레이 스타일 */
+.guide-simple-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 2000;
+}
+
+/* 오버레이 닫기 버튼 */
+.guide-overlay-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.guide-overlay-close:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
 }
 
 .guide-close-icon {
-  @apply w-6 h-6;
-}
-
-/* 모달 내용 */
-.guide-content {
-  @apply space-y-4 text-gray-600;
-}
-
-.guide-info-section {
-  @apply border-l-4 pl-4;
-}
-
-.guide-info-blue {
-  @apply border-blue-400;
-}
-
-.guide-info-green {
-  @apply border-green-400;
-}
-
-.guide-info-yellow {
-  @apply border-yellow-400;
-}
-
-.guide-info-purple {
-  @apply border-purple-400;
-}
-
-.guide-info-red {
-  @apply border-red-400;
-}
-
-.guide-info-title {
-  @apply font-semibold text-gray-800 mb-2 flex items-center;
-}
-
-.guide-emoji {
-  @apply mr-2;
-}
-
-.guide-info-text {
-  @apply leading-relaxed;
-}
-
-/* 모달 푸터 */
-.guide-footer {
-  @apply mt-8 flex justify-end space-x-3;
-}
-
-.guide-confirm-button {
-  @apply bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg transition-colors duration-200 font-medium shadow-md hover:shadow-lg;
-}
-
-/* 커스텀 애니메이션 (Tailwind에 없는 것들) */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95) translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-}
-
-/* 반응형 디자인 */
-@media (max-width: 768px) {
-  .guide-button {
-    @apply bottom-6 right-6 w-14 h-14;
-  }
-  
-  .guide-button-svg {
-    @apply w-7 h-7;
-  }
-  
-  .guide-button-icon {
-    @apply w-9 h-9;
-  }
-  
-  .guide-modal {
-    @apply mx-2 p-6;
-  }
-  
-  .guide-title {
-    @apply text-xl;
-  }
+    width: 20px;
+    height: 20px;
 }
