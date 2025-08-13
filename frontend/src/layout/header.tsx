@@ -1,69 +1,93 @@
 import { useState } from 'react';
-import '../style/header.css';
 
-// Props 타입 정의
 interface HeaderProps {
-    onResetChat: () => void;
+  onResetChat: () => void;
 }
 
 const Header = ({ onResetChat }: HeaderProps) => {
-    const [showLanguageMenu, setShowLanguageMenu] = useState(false);
-    const [currentLanguage, setCurrentLanguage] = useState('한국어');
-    
-    const handleLanguageChange = (language: string) => {
-        setCurrentLanguage(language);
-        setShowLanguageMenu(false);
-        // 여기에 언어 변경 로직 추가
-        console.log(`언어가 ${language}로 변경되었습니다.`);
-    };
-    
-    return (
-        <header>
-            <button onClick={onResetChat}>새채팅</button>  
-            &nbsp;  &nbsp;
-            <a href="/">홈페이지로고</a>
-            &nbsp;  &nbsp;
-            
-            {/* 한영전환 드롭다운 버튼 */}
-            <div 
-                className="language-toggle-container"
-                onMouseEnter={() => setShowLanguageMenu(true)}
-                onMouseLeave={() => setShowLanguageMenu(false)}
+  const [showLanguageMenu, setShowLanguageMenu] = useState(false);
+  const [currentLanguage, setCurrentLanguage] = useState<'한국어' | 'English'>('한국어');
+
+  const handleLanguageChange = (language: '한국어' | 'English') => {
+    setCurrentLanguage(language);
+    setShowLanguageMenu(false);
+    console.log(`언어가 ${language}로 변경되었습니다.`);
+  };
+
+  return (
+    <header
+      className="
+        w-full h-13
+        bg-[#BADDFE] backdrop-blur
+        border-b border-slate-200
+        flex items-center justify-between
+        px-4 sm:px-6 relative
+      "
+    >
+      {/* 왼쪽: 새채팅 */}
+      <button
+        onClick={onResetChat}
+        className="
+         active:scale-[0.98] transition
+        "
+      >
+        <img src="/icorns/NewChat.svg" alt="" className='h-8'/>
+      </button>
+
+      {/* 가운데: 로고 */}
+      <a
+        href="/"
+        className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2 hover:opacity-90"
+      >
+        <img src="/icorns/Logo.svg" alt="순천대학교 로고" className="h-8" />
+      </a>
+
+      <div
+        className="relative"
+        onMouseEnter={() => setShowLanguageMenu(true)}
+        onMouseLeave={() => setShowLanguageMenu(false)}
+      >
+        <div className="inline-flex items-center gap-1 cursor-pointer">
+          <span className="font-bold text-[#6C6B6B] bg-[#BADDFE] px-2 py-0.5 rounded">
+            {currentLanguage === '한국어' ? '한국어' : 'ENGLISH'}
+          </span>
+          <svg
+            className="w-3.5 h-3.5 opacity-70 text-[#6C6B6B]"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <path d="M5.23 7.21a.75.75 0 011.06.02L10 11.173l3.71-3.94a.75.75 0 111.08 1.04l-4.24 4.5a.75.75 0 01-1.08 0l-4.24-4.5a.75.75 0 01.02-1.06z" />
+          </svg>
+        </div>
+
+        {showLanguageMenu && (
+          <div
+            className="
+              absolute right-0 z-50 mt-1 w-28
+              rounded-md border border-slate-200 bg-white shadow-lg
+            "
+            role="menu"
+          >
+            <button
+              onClick={() => handleLanguageChange('한국어')}
+              className="w-full text-left px-3 py-2 text-sm hover:bg-[#E9F4FF]"
+              role="menuitem"
             >
-                <button className="language-toggle-btn">
-                    {/* 언어 전환 아이콘 이미지 */}
-                    <img 
-                        src="/path/to/language-icon.png" 
-                        alt="언어 전환" 
-                        className="language-icon"
-                    />
-                    {currentLanguage}
-                </button>
-                
-                {showLanguageMenu && (
-                    <div className="language-dropdown">
-                        <div 
-                            className="language-option"
-                            onClick={() => handleLanguageChange('한국어')}
-                        >
-                            한국어
-                        </div>
-                        <div 
-                            className="language-option"
-                            onClick={() => handleLanguageChange('English')}
-                        >
-                            English
-                        </div>
-                    </div>
-                )}
-            </div>
-            
-            {/* <button onClick={() => setShowTranslator(true)}>번역버튼</button> */}
-            <hr/>
-            
-            {/* {showTranslator && <Translator onClose={() => setShowTranslator(false)} />} */}
-        </header>
-    );
+              한국어 
+            </button>
+            <button
+              onClick={() => handleLanguageChange('English')}
+              className="w-full text-left px-3 py-2 text-sm hover:bg-[#E9F4FF]"
+              role="menuitem"
+            >
+              English
+            </button>
+          </div>
+        )}
+      </div>
+    </header>
+  );
 };
 
 export default Header;

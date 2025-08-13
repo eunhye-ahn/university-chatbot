@@ -258,22 +258,28 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
 
     return (
         <div className="chat-container">
-            {/* 🎉 환영사진 - 메시지가 없을 때만 표시 */}
             {messages.length === 0 && (
-                <div className='welcome-photo'>
-                    <a>환영사진 들어갈 곳</a>
-                </div>
+                <div className='flex flex-col items-center justify-center text-center h-full'>
+                                <img src="/icorns/Mascot.svg" alt="마스코트" className="h-60 mb-8" />
+
+<p>
+  안녕하세요 국립순천대학교 컴퓨터공학과 입니다.<br />
+  궁금한 것이 있다면 총장님에게 질문하세요!
+</p>                </div>
             )}
             
-            {/* 💬 채팅 메시지 구역 */}
+
             {messages.length > 0 && (
                 <div className="chat-messages">
+                    <div className='chat-inner'>
                     {messages.map((msg, index) => (
                         <div key={index} className={`message-row ${msg.sender === '나' ? 'my-message-row' : 'bot-message-row'}`}>
-                            {/* 🤖 봇 프로필과 이름 */}
+
                             {msg.sender === '봇' && (
                                 <div className="profile-and-name">
-                                    <div className="profile-image">🤖</div>
+                                    <div className='profile-image'>
+                                    <img src="/icorns/MascortFace.svg" alt="총장이"/>
+</div>
                                     <div className="bot-name">챗봇</div>
                                 </div>
                             )}
@@ -304,10 +310,12 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
                     {/* ⏳ 타이핑 인디케이터 */}
                     {isTyping && (
                         <div className="message-row bot-message-row">
-                            <div className="profile-and-name">
-                                <div className="profile-image">🤖</div>
-                                <div className="bot-name">챗봇</div>
-                            </div>
+                                                            <div className="profile-and-name">
+                                    <div className='profile-image'>
+                                    <img src="/icorns/MascortFace.svg" alt="총장이"/>
+</div>
+                                    <div className="bot-name">챗봇</div>
+                                </div>
                             <div className="message-content-below">
                                 <div className="message-bubble bot-bubble typing-indicator">
                                     <div className="typing-dots">
@@ -322,6 +330,7 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
                     
                     <div ref={messagesEndRef} />
                 </div>
+                </div>
             )}
             
             {/* 📝 입력 구역 */}
@@ -334,7 +343,7 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
                         title="자주 묻는 질문"
                         disabled={isTyping}
                     >
-                        ?
+                        FAQ
                     </button>
                     <FAQ 
                         isOpen={showFAQ} 
@@ -356,6 +365,7 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
                         disabled={isTyping}
                         autoInputEnabled={autoInput}
                         className="input-wrapper"
+                        inputClassName="message-input"
                         autoSend={true}
                         onAutoSend={handleAutoCompleteAutoSend}
                     />

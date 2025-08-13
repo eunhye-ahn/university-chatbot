@@ -4,6 +4,7 @@ import Header from './layout/header';
 import ChatInterface from './layout/ChatInterface';
 import Notice from './layout/notice';
 import './App.css';
+import './index.css'
 
 interface Message {
     sender: string;
