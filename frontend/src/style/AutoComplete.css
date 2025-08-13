@@ -13,7 +13,7 @@
 /* ⌨️ 자동완성 입력창 - textarea로 박스 전체 활용 */
 .autocomplete-input {
     @apply flex-1 border-none outline-none text-base bg-transparent box-border;
-    padding: 12px 20px 40px 20px; /* 하단에 토글 공간 확보 */
+    padding: 54px 54px 50px 20px; /* 하단에 토글 공간 확보 */
     line-height: 1.5;
     width: 100%;
     height: 100%; /* 부모 컨테이너 전체 높이 사용 */
