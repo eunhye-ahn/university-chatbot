@@ -365,7 +365,7 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
                         disabled={isTyping}
                         autoInputEnabled={autoInput}
                         className="input-wrapper"
-                        inputClassName="message-input"
+                        //inputClassName="message-input"
                         autoSend={true}
                         onAutoSend={handleAutoCompleteAutoSend}
                     />

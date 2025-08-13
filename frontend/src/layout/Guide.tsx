@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import '../style/guide.css';
+import '../style/Guide.css';
 
 const Guide: React.FC = () => {
     const [isOpen, setIsOpen] = useState(false);
