@@ -3,15 +3,23 @@
 /* 작은 FAQ 컨테이너 (기본 상태) - FAQ 버튼 바로 위에 위치 */
 .faq-container-small {
     position: absolute;
-    left: 0; /* FAQ 버튼과 같은 위치 */
-    bottom: 60px; /* FAQ 버튼 위쪽에 위치 */
-    width: 200px;
-    height: 300px;
-    min-width: 200px; /* 최소 너비 보장 */
-    min-height: 300px; /* 최소 높이 보장 */
+    right: 0%;
+    /* FAQ 버튼과 같은 위치 */
+    bottom: 70px;
+    /* FAQ 버튼 위쪽에 위치 */
+    width: 16px;
+    height: 250px;
+    min-width: 160px;
+    /* 최소 너비 보장 */
+    min-height: 250px;
+    /* 최소 높이 보장 */
     background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 0;
+    border: 1px solid black;
+    /* box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); */
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -22,31 +30,45 @@
 /* 전체 화면 FAQ (최대화 상태) */
 .faq-fullscreen {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
+    inset: 0;
     height: 100vh;
     background-color: white;
     display: flex;
     flex-direction: column;
     z-index: 1001;
+    overflow: hidden;
+    justify-content: center;
+}
+
+.faq-scroll {
+    flex: 1;
+    overflow: hidden;
+}
+
+.faq-scroll-viewport {
+    height: 100%;
+    overflow-y: auto;
+    width: calc(100% - 16px);
+    margin-right: 16px;
 }
 
 /* FAQ 헤더 */
 .faq-header {
-    background-color: #f8f9fa;
-    padding: 8px 12px;
-    border-bottom: 1px solid #e9ecef;
+    background-color: #FFFEF8;
+    padding-top: 8px;
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
     align-items: center;
+    position: relative;
     min-height: 40px;
 }
 
 .faq-header h3 {
-    margin: 0;
+    margin-top: 20px;
     font-size: 14px;
     color: #333;
+    font-weight: bold;
 }
 
 .faq-fullscreen .faq-header h3 {
@@ -55,13 +77,15 @@
 
 /* 컨트롤 버튼들 */
 .faq-controls {
+    position: absolute;
+    top: 8px;
+    right: 10px;
     display: flex;
     gap: 4px;
 }
 
 .faq-control-btn {
-    width: 20px;
-    height: 20px;
+    color: #41A3FF;
     border: none;
     background-color: transparent;
     cursor: pointer;
@@ -69,12 +93,12 @@
     align-items: center;
     justify-content: center;
     border-radius: 4px;
-    font-size: 12px;
+    font-size: 10px;
     transition: background-color 0.2s;
 }
 
 .faq-fullscreen .faq-control-btn {
-    width: 24px;
+    width: 50px;
     height: 24px;
     font-size: 14px;
 }
@@ -91,20 +115,31 @@
 /* FAQ 내용 */
 .faq-content {
     flex: 1;
-    overflow-y: auto;
-    padding: 8px;
+    overflow: visible;
+    padding: 4px;
+    background-color: #FFFEF8;
 }
 
 .faq-fullscreen .faq-content {
+
+    max-width: 1200px;
+    width: 100%;
     padding: 20px;
-    max-width: 800px;
-    margin: 0 auto;
+    margin: 0 150px;
 }
 
 /* FAQ 아이템 */
 .faq-item {
-    border-bottom: 1px solid #e9ecef;
-    margin-bottom: 4px;
+    display: flex;
+    justify-content: center;
+    border: 1px solid black;
+    background-color: white;
+    margin: 8px 8px;
+    /* padding : 4px 4px; */
+    border-radius: 20px;
+    text-align: center;
+
+
 }
 
 .faq-fullscreen .faq-item {
@@ -112,15 +147,16 @@
 }
 
 .faq-question {
-    padding: 8px 0;
+    padding: 5px;
     cursor: pointer;
     display: flex;
-    justify-content: flex-start; /* 왼쪽 정렬 */
+    justify-content: flex-start;
+    /* 왼쪽 정렬 */
     align-items: center;
-    font-weight: 500;
     color: #333;
     transition: color 0.2s;
-    font-size: 12px;
+    font-size: 14px;
+
 }
 
 .faq-fullscreen .faq-question {
@@ -137,23 +173,26 @@
 }
 
 /* 스크롤바 스타일 */
-.faq-content::-webkit-scrollbar {
-    width: 4px;
+.faq-scroll-viewport::-webkit-scrollbar {
+    width: 7px;
 }
 
 .faq-fullscreen .faq-content::-webkit-scrollbar {
     width: 6px;
 }
 
-.faq-content::-webkit-scrollbar-track {
+.faq-scroll-viewport::-webkit-scrollbar-track {
     background: #f1f1f1;
+    margin: 100px 4px;
 }
 
-.faq-content::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 3px;
+.faq-scroll-viewport::-webkit-scrollbar-thumb {
+    background: #CEE7FF;
+    border-radius: 10px;
+    border: 6px solid transparent;
+
 }
 
-.faq-content::-webkit-scrollbar-thumb:hover {
-    background: #555;
+.faq-scroll-viewport::-webkit-scrollbar-thumb:hover {
+    background: #6bb6ff;
 }

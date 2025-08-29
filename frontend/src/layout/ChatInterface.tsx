@@ -260,7 +260,7 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
         <div className="chat-container">
             {messages.length === 0 && (
                 <div className='flex flex-col items-center justify-center text-center h-full'>
-                                <img src="/icorns/Mascot.svg" alt="마스코트" className="h-60 mb-8" />
+                                <img src="/icons/Mascot.svg" alt="마스코트" className="h-60 mb-8" />
 
 <p>
   안녕하세요 국립순천대학교 컴퓨터공학과 입니다.<br />
@@ -278,7 +278,7 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
                             {msg.sender === '봇' && (
                                 <div className="profile-and-name">
                                     <div className='profile-image'>
-                                    <img src="/icorns/MascortFace.svg" alt="총장이"/>
+                                    <img src="/icons/MascortFace.svg" alt="총장이"/>
 </div>
                                     <div className="bot-name">챗봇</div>
                                 </div>
@@ -312,7 +312,7 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
                         <div className="message-row bot-message-row">
                                                             <div className="profile-and-name">
                                     <div className='profile-image'>
-                                    <img src="/icorns/MascortFace.svg" alt="총장이"/>
+                                    <img src="/icons/MascortFace.svg" alt="총장이"/>
 </div>
                                     <div className="bot-name">챗봇</div>
                                 </div>

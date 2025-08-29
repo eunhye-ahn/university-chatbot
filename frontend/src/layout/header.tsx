@@ -31,7 +31,7 @@ const Header = ({ onResetChat }: HeaderProps) => {
          active:scale-[0.98] transition
         "
       >
-        <img src="/icorns/NewChat.svg" alt="" className='h-8'/>
+        <img src="/icons/NewChat.svg" alt="" className='h-8'/>
       </button>
 
       {/* 가운데: 로고 */}
@@ -39,7 +39,7 @@ const Header = ({ onResetChat }: HeaderProps) => {
         href="/"
         className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2 hover:opacity-90"
       >
-        <img src="/icorns/Logo.svg" alt="순천대학교 로고" className="h-8" />
+        <img src="/icons/Logo.svg" alt="순천대학교 로고" className="h-8" />
       </a>
 
       <div

@@ -3,26 +3,27 @@
 /* 이용안내 버튼 */
 .guide-button {
   position: fixed;
+  margin: 30px;
   bottom: 2rem;
   right: 2rem;
-  width: 4rem;
+  width: 5rem;
   height: 4rem;
-  background-color: #bbf7d0; /* bg-green-200 */
-  color: white;
-  border-radius: 50%;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  transition: all 0.3s;
-  z-index: 40;
   display: flex;
   align-items: center;
   justify-content: center;
   border: none;
   cursor: pointer;
+
+}
+
+@media (max-width: 1200px) {
+  .guide-button {
+    display: none; /* 화면 너비 768px 이하일 때 숨김 */
+  }
 }
 
 .guide-button:hover {
-  background-color: #16a34a; /* hover:bg-green-600 */
-  transform: scale(1.1);
+
 }
 
 .guide-button-icon {

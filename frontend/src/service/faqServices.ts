@@ -16,15 +16,15 @@ export interface FAQItem {
 
 // 임시 FAQ 목록 (실제로는 서버에서 관리)
 export const FAQ_ITEMS: FAQItem[] = [
-    { id: 1, title: "챗봇 사용법", description: "기본적인 서비스 사용법을 안내합니다" },
-    { id: 2, title: "계정 관리", description: "계정 설정 및 관리 방법입니다" },
-    { id: 3, title: "결제 및 환불", description: "결제 방법과 환불 정책입니다" },
-    { id: 4, title: "기술 지원", description: "기술적인 문제 해결 방법입니다" },
-    { id: 5, title: "개인정보 보호", description: "개인정보 처리방침 안내입니다" },
-    { id: 6, title: "서비스 정책", description: "이용약관 및 정책 안내입니다" },
-    { id: 7, title: "문의 및 신고", description: "고객센터 문의 방법입니다" },
-    { id: 8, title: "업데이트 정보", description: "최신 업데이트 및 공지사항입니다" },
-    { id: 9, title: "기타 문의", description: "기타 궁금한 사항들입니다" }
+    { id: 1, title: "학사일정", description: "학사일정 안내합니다" },
+    { id: 2, title: "교육과정", description: "교육과정 입니다" },
+    { id: 3, title: "장학금", description: "장학금 입니다" },
+    { id: 4, title: "실험실", description: "실험실 입니다" },
+    { id: 5, title: "도서관", description: "도서관 입니다" },
+    { id: 6, title: "교내연락처", description: "교내연락처 입니다" },
+    { id: 7, title: "셔틀버스", description: "셔틀버스 입니다" },
+    { id: 8, title: "편의시설", description: "편의시설 입니다" },
+    { id: 9, title: "도시락", description: "식도락 입니다" }
 ];
 
 // FAQ 데이터를 가져오는 API 함수
