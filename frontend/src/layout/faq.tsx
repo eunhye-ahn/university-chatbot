@@ -85,22 +85,24 @@ const FAQ: React.FC<FAQProps> = ({ isOpen, onClose, onSendMessage, onSubItemClic
     return (
         <div className={isMaximized ? 'faq-fullscreen' : 'faq-container-small'}>
             {/* 헤더 */}
-            <div className="faq-header">
-                <h3>자주 찾는 질문</h3>
+            <div className={`faq-header  ${isMaximized ? 'faq-header--max' : ''}`}>
+                <h3 className={`faq-tilte ${isMaximized ? 'faq-title--left' : ''}`}>
+                    {isMaximized ? '자주 찾는 질문(FAQ)' : '자주 찾는 질문'}</h3>
                 <div className="faq-controls">
                     <button
                         className="faq-control-btn"
-                        onClick={() => setIsMaximized(!isMaximized)}
+                        onClick={() => {
+                            if(isMaximized) {
+                            setIsMaximized(false);
+                        } else {
+                            setIsMaximized(true);
+                        }
+                        }}
+                        title={isMaximized ? "X" : "전체보기"}
+                        aria-label={isMaximized? "X" : "전체보기"}
                     >
-                        전체보기
+                        {isMaximized? "X" : "전체보기"}
                     </button>
-                    {/* <button 
-                        className="faq-control-btn close-btn"
-                        onClick={onClose}
-                        title="닫기"
-                    >
-                        ✕
-                    </button> */}
                 </div>
             </div>
 
@@ -148,7 +150,7 @@ const FAQ: React.FC<FAQProps> = ({ isOpen, onClose, onSendMessage, onSubItemClic
                                                         className="faq-sub-item-btn"
                                                         onClick={() => handleSubItemClick(optionText, item.id, subIndex)}
                                                     >
-                                                        [{optionText}]
+                                                        {optionText}
                                                     </button>
                                                 ))}
                                             </div>

@@ -27,10 +27,18 @@
     transition: all 0.3s ease;
 }
 
+.faq-container-small .faq-title-inline .faq-icon {
+  display: none;
+}
+
+
 /* 전체 화면 FAQ (최대화 상태) */
 .faq-fullscreen {
     position: fixed;
-    inset: 0;
+    top : 95px;
+    left : 0;
+    right : 0;
+    bottom : 0;
     height: 100vh;
     background-color: white;
     display: flex;
@@ -43,12 +51,18 @@
 .faq-scroll {
     flex: 1;
     overflow: hidden;
+    min-height: 0;
 }
 
 .faq-scroll-viewport {
     height: 100%;
     overflow-y: auto;
-    width: calc(100% - 16px);
+    width: 100%;
+    margin-right: 0;
+}
+
+.faq-fullscreen .faq-scroll-viewport{
+    width : calc(100% - 16px);
     margin-right: 16px;
 }
 
@@ -64,6 +78,15 @@
     min-height: 40px;
 }
 
+.faq-title--left {
+  text-align: left;
+}
+
+.faq-header--max .faq-title {
+  flex: 1;
+}
+
+
 .faq-header h3 {
     margin-top: 20px;
     font-size: 14px;
@@ -71,8 +94,17 @@
     font-weight: bold;
 }
 
+.faq-fullscreen .faq-header {
+  align-items: flex-start;      /* center -> flex-start */
+  /* 선택: 본문과 좌우 여백을 맞추고 싶다면 아래처럼 패딩도 조정 */
+  padding: 20px 150px 8px;      /* .faq-fullscreen .faq-content 의 좌우 150px과 매칭 */
+}
+
 .faq-fullscreen .faq-header h3 {
-    font-size: 18px;
+    text-align: left;
+    width: 100%; 
+    font-size: 30px;
+    margin-left: 30px;
 }
 
 /* 컨트롤 버튼들 */
@@ -143,7 +175,75 @@
 }
 
 .faq-fullscreen .faq-item {
-    margin-bottom: 8px;
+     border: none;
+  background: transparent;
+  border-radius: 0;
+  margin: 0 0 12px 0;   /* 단락 간 간격만 살짝 */
+  padding: 0;           /* 내부 여백 제거 (있다면) */
+  justify-content: flex-start; /* 가운데 정렬 → 왼쪽 정렬 */
+  text-align: left;     /* 텍스트 왼쪽 정렬 */
+}
+
+/* 제목/본문 클릭 영역을 '텍스트'처럼 보이게 */
+.faq-fullscreen .faq-question {
+  display: block;       /* 행 전체 쓰는 블록 */
+  padding: 0;           /* 패딩 제거 */
+  font-size: 16px;      /* 읽기 좋은 크기 */
+  color: #333;
+  cursor: default;      /* 버튼 느낌 제거 */
+}
+
+/* 호버 효과 제거 (배경/색/패딩 변화 없앰) */
+.faq-fullscreen .faq-question:hover {
+  background: transparent;
+  color: inherit;
+  border-radius: 0;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.faq-sub-items {
+  display: flex;
+  gap: 8px;             /* 버튼 사이 여백 */
+  margin-top: 10px;
+}
+
+/* 버튼 공통 스타일 */
+.faq-sub-item-btn {
+  border: 1px solid black; 
+  font-weight: bold;
+  background: white;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 14px;
+  width: 300px;
+  border-radius: 20px;
+  margin: 10px 10px;
+}
+
+/* 호버 시 스타일 (선택 사항) */
+.faq-sub-item-btn:hover {
+  background: #f8f9fa;
+}
+
+.faq-title-inline {
+  display: inline-flex;       /* 한 줄 배치 */
+  align-items: center;        /* 세로 가운데 정렬 */
+  gap: 6px;                   /* 아이콘-텍스트 간격 */
+  white-space: nowrap;        /* 줄바꿈 방지(원하면 제거) */
+}
+
+/* 아이콘 크기/정렬 */
+.faq-title-icon {
+  display: inline-block;      /* 전역 img:block 대응 */
+  vertical-align: middle;
+  flex: 0 0 auto;
+}
+
+/* 텍스트가 길 때 말줄임 (선택사항) */
+.faq-title-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .faq-question {
