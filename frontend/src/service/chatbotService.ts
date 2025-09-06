@@ -1,6 +1,6 @@
-// 🤖 챗봇 응답 DB 연동 서비스
+//챗봇 응답 DB 연동 서비스
 
-// 📝 챗봇 응답 타입 정의
+
 interface ChatbotResponse {
     response: string;
     confidence: number;             // 응답 신뢰도 (0-1)
@@ -8,14 +8,14 @@ interface ChatbotResponse {
     suggestedActions?: string[];    // 추천 후속 질문들
 }
 
-// 🔗 API 응답 타입 정의
+
 interface ChatbotApiResponse {
     success: boolean;
     data: ChatbotResponse;
     message?: string;
 }
 
-// 👤 사용자 컨텍스트 타입 정의
+
 interface UserContext {
     userId?: string;
     sessionId: string;
@@ -27,16 +27,15 @@ interface UserContext {
 }
 
 /**
- * 🤖 챗봇 응답을 위한 서비스 클래스
- * 실제 사용 시 이 파일을 참고하여 구현하세요
+ *챗봇 응답을 위한 서비스 클래스
  */
 export class ChatbotService {
     private static readonly API_BASE_URL = '/api/chatbot';
     
     /**
-     * 💬 사용자 메시지에 대한 챗봇 응답을 가져옵니다
+     *사용자 메시지에 대한 챗봇응답
      * @param message 사용자 메시지
-     * @param context 사용자 컨텍스트 (선택적)
+     * @param context 사용자 컨텍스트
      * @returns 챗봇 응답
      */
     static async getChatbotResponse(
@@ -73,13 +72,13 @@ export class ChatbotService {
         } catch (error) {
             console.error('챗봇 API 호출 중 오류:', error);
             
-            // 🔄 에러 발생 시 기본 응답 반환
+            //에러 발생 시 기본 응답 반환
             return this.getFallbackResponse(message);
         }
     }
 
     /**
-     * 📊 상세한 챗봇 응답 정보를 가져옵니다 (신뢰도, 카테고리, 추천 질문 포함)
+     * 챗봇 응답 상세정보(신뢰도, 카테고리, 추천 질문 포함)
      * @param message 사용자 메시지
      * @param context 사용자 컨텍스트
      * @returns 상세 챗봇 응답
@@ -119,7 +118,7 @@ export class ChatbotService {
         } catch (error) {
             console.error('상세 챗봇 API 호출 중 오류:', error);
             
-            // 🔄 에러 발생 시 기본 응답 반환
+            //에러 발생 시 기본 응답 반환
             return {
                 response: this.getFallbackResponse(message),
                 confidence: 0.5,
@@ -129,7 +128,7 @@ export class ChatbotService {
     }
 
     /**
-     * 🏷️ 카테고리별 챗봇 응답을 가져옵니다
+     * 카테고리별 챗봇 응답
      * @param message 사용자 메시지
      * @param category 카테고리 (order, shipping, return, etc.)
      * @param context 사용자 컨텍스트
@@ -175,14 +174,14 @@ export class ChatbotService {
     }
 
     /**
-     * 🛡️ API 호출 실패 시 사용할 기본 응답 (키워드 기반)
+     * API 호출 실패 시 사용할 기본 응답 (키워드 기반)
      * @param message 사용자 메시지
      * @returns 기본 응답
      */
     private static getFallbackResponse(message: string): string {
         const lowerMessage = message.toLowerCase();
         
-        // 🔍 키워드 기반 기본 응답 (DB 연결 실패 시 사용)
+        //키워드 기반 기본 응답
         if (lowerMessage.includes('주문 취소') || lowerMessage.includes('취소')) {
             return '주문 취소를 도와드리겠습니다. 주문번호를 알려주시면 취소 처리해드릴게요.';
         } else if (lowerMessage.includes('주문 확인') || lowerMessage.includes('주문 조회')) {
@@ -211,11 +210,11 @@ export class ChatbotService {
     }
 
     /**
-     * 📚 대화 기록을 저장합니다
+     * 대화 기록 저장
      * @param sessionId 세션 ID
      * @param userMessage 사용자 메시지
      * @param botResponse 봇 응답
-     * @param userId 사용자 ID (선택적)
+     * @param userId 사용자 ID
      */
     static async saveChatHistory(
         sessionId: string,
@@ -239,12 +238,10 @@ export class ChatbotService {
             });
         } catch (error) {
             console.error('대화 기록 저장 중 오류:', error);
-            // 💡 저장 실패는 사용자 경험에 영향을 주지 않으므로 조용히 처리
         }
     }
 }
 
-// 🎯 ChatInterface에서 사용할 헬퍼 함수
 export const createChatbotResponseFetcher = (sessionId: string, userId?: string) => {
     return async (message: string): Promise<string> => {
         const context: UserContext = {
@@ -254,41 +251,9 @@ export const createChatbotResponseFetcher = (sessionId: string, userId?: string)
         
         const response = await ChatbotService.getChatbotResponse(message, context);
         
-        // 📚 대화 기록 저장 (비동기적으로 처리, 에러가 발생해도 사용자 경험에 영향 없음)
+        //대화기록 저장
         ChatbotService.saveChatHistory(sessionId, message, response, userId);
         
         return response;
     };
 };
-
-/* 
-✨ 사용 예시:
-
-// ChatInterface.tsx에서
-import { createChatbotResponseFetcher } from '../service/chatbotService';
-
-const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
-    // ... 기존 코드 ...
-    
-    // 🔑 세션 ID 생성 (페이지 로드 시 한 번)
-    const [sessionId] = useState(() => `session_${Date.now()}_${Math.random()}`);
-    const userId = getCurrentUserId(); // 실제 구현 필요
-    
-    // 🤖 챗봇 응답 함수 생성
-    const fetchChatbotResponse = createChatbotResponseFetcher(sessionId, userId);
-    
-    // simulateBotResponse 함수에서 사용
-    const simulateBotResponse = async (userMessage: string, currentMessages: Message[]) => {
-        setIsTyping(true);
-        
-        try {
-            const botResponse = await fetchChatbotResponse(userMessage);
-            // ... 응답 처리 로직
-        } catch (error) {
-            // ... 에러 처리 로직
-        } finally {
-            setIsTyping(false);
-        }
-    };
-};
-*/

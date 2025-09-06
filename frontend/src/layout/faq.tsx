@@ -59,8 +59,8 @@ const FAQ: React.FC<FAQProps> = ({ isOpen, onClose, onSendMessage, onSubItemClic
     }, [isMaximized]);
 
     // FAQ 메인 카테고리 클릭 처리
-    const handleFAQClick = (title: string, id: number) => {
-        onSendMessage(title, id);
+    const handleFAQClick = (label: string, id: number) => {
+        onSendMessage(label, id);
         onClose();
     };
 
@@ -86,7 +86,7 @@ const FAQ: React.FC<FAQProps> = ({ isOpen, onClose, onSendMessage, onSubItemClic
         <div className={isMaximized ? 'faq-fullscreen' : 'faq-container-small'}>
             {/* 헤더 */}
             <div className={`faq-header  ${isMaximized ? 'faq-header--max' : ''}`}>
-                <h3 className={`faq-tilte ${isMaximized ? 'faq-title--left' : ''}`}>
+                <h3 className={`faq-title ${isMaximized ? 'faq-title--left' : ''}`}>
                     {isMaximized ? '자주 찾는 질문(FAQ)' : '자주 찾는 질문'}</h3>
                 <div className="faq-controls">
                     <button
@@ -120,7 +120,7 @@ const FAQ: React.FC<FAQProps> = ({ isOpen, onClose, onSendMessage, onSubItemClic
                                 <div className="faq-item">
                                     <div
                                         className="faq-question"
-                                        onClick={() => handleFAQClick(item.title, item.id)}
+                                        onClick={() => handleFAQClick(item.label, item.id)}
                                     >
                                         {isMaximized ? (
                                             <div>

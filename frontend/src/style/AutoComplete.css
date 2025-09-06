@@ -1,29 +1,39 @@
-/* 🔍 자동완성 컴포넌트 스타일 (Tailwind CSS 기반) */
+/* === Autocomplete - Pure CSS 버전 === */
 
-/* 📦 자동완성 래퍼 컨테이너 */
+/* 래퍼 */
 .autocomplete-wrapper {
-    @apply relative flex-1;
+    position: relative;
+    flex: 1;
 }
 
-/* 📦 입력 래퍼 컨테이너 (호환성을 위해 유지) */
 .input-wrapper {
-    @apply relative flex-1;
+    position: relative;
+    flex: 1;
 }
 
-/* ⌨️ 자동완성 입력창 - textarea로 박스 전체 활용 */
+/* 입력창 (textarea) */
 .autocomplete-input {
-    @apply flex-1 border-none outline-none text-base bg-transparent box-border;
-    padding: 54px 54px 50px 20px; /* 하단에 토글 공간 확보 */
-    line-height: 1.5;
-    width: 100%;
-    height: 100%; /* 부모 컨테이너 전체 높이 사용 */
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    background: transparent;
+    box-sizing: border-box;
+
+    /* 네가 원하는 핵심 속성들 */
     font-family: inherit;
     resize: none;
     overflow-y: auto;
     word-wrap: break-word;
+
+    /* 기존 패딩/사이즈 */
+    padding: 54px 54px 50px 20px;
+    line-height: 1.5;
+    width: 100%;
+    height: 100%;
 }
 
-/* 📜 textarea 스크롤바 스타일 */
+/* 입력 스크롤바 */
 .autocomplete-input::-webkit-scrollbar {
     width: 6px;
 }
@@ -41,156 +51,159 @@
     background: rgba(0, 0, 0, 0.3);
 }
 
-/* 📋 자동완성 드롭다운 메뉴 */
+/* 드롭다운 */
 .autocomplete-dropdown {
-    @apply absolute bottom-full left-0 right-0 
-           bg-white border border-gray-300 rounded-lg 
-           shadow-lg max-h-48 overflow-y-auto z-50 mb-1;
-    
-    /* 커스텀 그림자 효과로 입체감 추가 */
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    right: 0;
+    background: #FFFEF8;
+    border: 1px solid black;
+    /* gray-300 */
+    border-radius: 3px;
+    /* rounded-lg */
     box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
-    
-    /* 드롭다운 등장 애니메이션 */
-    animation: slideDown 0.2s ease-out;
+    max-height: 12rem;
+    /* 48 */
+    overflow-y: auto;
+    z-index: 50;
+    margin-bottom: 4px;
+    animation: slideDown .2s ease-out;
+
+     left: 0;
+  right: 0;
+  bottom: calc(100% + var(--dropdown-gap));
+
+  width: calc(100% + 2 * (var(--ic-border-x) + var(--ic-outline-x)));
+  transform: translateX(calc(-1 * (var(--ic-border-x) + var(--ic-outline-x))));
 }
 
-/* 📝 자동완성 항목 */
+/* 항목 */
 .autocomplete-item {
-    @apply py-3 px-4 cursor-pointer transition-all duration-200 
-           border-b border-gray-100 text-sm text-gray-800
-           hover:bg-blue-50 hover:text-blue-700 hover:scale-[1.02];
+    padding: 12px 16px;
+    /* py-3 px-4 */
+    cursor: pointer;
+    transition: all .2s;
+    border-bottom: 1px solid black;
+    /* gray-100 */
+    font-size: 14px;
+    /* text-sm */
+    color: #1f2937;
+    /* gray-800 */
 }
 
 .autocomplete-item:last-child {
-    @apply border-b-0;
+    border-bottom: 0;
 }
 
-/* ✨ 선택된 자동완성 항목 스타일 */
-.autocomplete-item:hover,
+.autocomplete-item:hover {
+    background: #D2E9FF;
+}
+
+/* 선택 상태 */
 .autocomplete-item-selected {
-    @apply bg-blue-50 text-blue-700 font-medium;
+    background: #eff6ff;
+    font-weight: 500;
 }
 
-/* 👆 클릭 시 피드백 효과 */
+/* 클릭 피드백 */
 .autocomplete-item:active {
-    @apply bg-blue-100 scale-[0.98] transition-transform duration-75;
+    background: #dbeafe;
+    /* blue-100 */
+    transform: scale(0.98);
+    transition: transform .075s;
 }
 
-/* ⏳ 로딩 상태 스타일 */
+/* 로딩 */
 .autocomplete-loading {
-    @apply py-3 px-4 text-center text-gray-500 text-sm italic;
+    padding: 12px 16px;
+    text-align: center;
+    color: #6b7280;
+    /* gray-500 */
+    font-size: 14px;
+    font-style: italic;
 }
 
-/* 🌙 다크 모드 지원 */
-@media (prefers-color-scheme: dark) {
-    .autocomplete-dropdown {
-        @apply bg-gray-800 border-gray-600;
-        box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.3);
-    }
-    
-    .autocomplete-item {
-        @apply text-gray-200 border-gray-700;
-    }
-    
-    .autocomplete-item:hover,
-    .autocomplete-item-selected {
-        @apply bg-blue-900 text-blue-300;
-    }
-    
-    .autocomplete-loading {
-        @apply text-gray-400;
-    }
-}
-
-/* 📜 커스텀 스크롤바 */
+/* 드롭다운 스크롤바 */
 .autocomplete-dropdown::-webkit-scrollbar {
-    @apply w-1.5;
+    width: 6px;
 }
 
 .autocomplete-dropdown::-webkit-scrollbar-track {
-    @apply bg-gray-100 rounded;
+    background: #f3f4f6;
+    border-radius: 6px;
 }
 
 .autocomplete-dropdown::-webkit-scrollbar-thumb {
-    @apply bg-gray-300 rounded;
+    background: #d1d5db;
+    border-radius: 6px;
 }
 
 .autocomplete-dropdown::-webkit-scrollbar-thumb:hover {
-    @apply bg-gray-400;
+    background: #9ca3af;
 }
 
-/* 🌙 다크모드 스크롤바 */
-@media (prefers-color-scheme: dark) {
-    .autocomplete-dropdown::-webkit-scrollbar-track {
-        @apply bg-gray-700;
-    }
-    
-    .autocomplete-dropdown::-webkit-scrollbar-thumb {
-        @apply bg-gray-600;
-    }
-    
-    .autocomplete-dropdown::-webkit-scrollbar-thumb:hover {
-        @apply bg-gray-500;
-    }
-}
 
-/* 📱 반응형 디자인 - 모바일 최적화 */
+/* 반응형 */
 @media (max-width: 768px) {
     .autocomplete-item {
-        @apply py-2.5 px-3 text-xs;
+        padding: 10px 12px;
+        font-size: 12px;
     }
-    
+
     .autocomplete-dropdown {
-        @apply max-h-36;
+        max-height: 9rem;
     }
-    
+
     .autocomplete-loading {
-        @apply py-2.5 px-3 text-xs;
+        padding: 10px 12px;
+        font-size: 12px;
     }
-    
+
     .autocomplete-input {
-        padding: 16px 18px !important; /* 모바일에서 조금 작은 패딩 */
+        padding: 16px 18px !important;
         font-size: 14px !important;
-        height: 55px !important; /* 모바일에서 조금 작은 높이 */
+        height: 55px !important;
     }
 }
 
-/* 🎯 포커스 상태 개선 */
+/* 포커스/플레이스홀더/비활성 */
 .autocomplete-input:focus {
-    @apply outline-none;
+    outline: none;
 }
 
-/* 📝 플레이스홀더 스타일 개선 */
 .autocomplete-input::placeholder {
     color: #999;
     font-size: 15px;
 }
 
-/* 🚫 비활성화 상태 */
 .autocomplete-input:disabled {
-    @apply opacity-50 cursor-not-allowed;
+    opacity: .5;
+    cursor: not-allowed;
 }
 
-/* ✨ 드롭다운 등장 애니메이션 */
+/* 애니메이션 */
 @keyframes slideDown {
     from {
         opacity: 0;
         transform: translateY(-10px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
     }
 }
 
-/* 🔗 ChatInterface와의 연동 스타일 */
+/* ChatInterface 연동 */
 .input-container .autocomplete-wrapper {
-    @apply flex-1;
-}
 
-/* 🎨 높은 우선순위로 ChatInterface 스타일과 조화 */
+  position: relative;
+  display: block;
+  width: 100%;}
+
 .chat-input .autocomplete-wrapper .autocomplete-input {
-    padding: 18px 20px !important; /* ChatInterface.css의 .message-input과 동일 */
-    height: 60px !important; /* 높이도 동일하게 맞춤 */
-    line-height: 1.4 !important; /* 라인 높이도 동일 */
+    padding: 18px 20px !important;
+    height: 60px !important;
+    line-height: 1.4 !important;
 }
