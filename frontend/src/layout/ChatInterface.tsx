@@ -6,6 +6,8 @@ import FAQ from '../../src/layout/faq';
 import FAQChatResponse from './faqChat';
 import AutoComplete, { type AutoCompleteRef } from './AutoComplete';
 import { fetchFAQData } from '../service/faqServices';
+import { AutoCompleteService } from '../service/autoCompleteService';
+import { CalendarService } from '../service/CalendarService';
 
 interface Message {
     sender: string;
@@ -14,6 +16,15 @@ interface Message {
     isError?: boolean;
     type?: 'regular' | 'faq';
     faqOptions?: string[];
+    children?: Array<{  // 🔥 이 부분 추가!
+        id: number;
+        question: string;
+        answer_type: string;
+        answer_content: string | null;
+        title: string;
+        card_priority?: number;
+        action_type?: string;
+    }>;    
 }
 
 interface FAQSubItem {
@@ -29,6 +40,10 @@ const getCurrentTime = () => {
     const ampm = hours >= 12 ? '오후' : '오전';
     const displayHours = hours % 12 || 12;
     return `${ampm} ${displayHours}:${minutes.toString().padStart(2, '0')}`;
+};
+
+const normalizeMessage = (text: string): string => {
+    return text.replace(/\\n/g, '\n');
 };
 
 interface ChatInterfaceProps {
@@ -53,6 +68,19 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
             messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
         }
     }, [messages, isTyping]);
+
+    const fetchAutoCompleteSuggestions = async (query: string): Promise<string[]> => {
+        try {
+            const suggestions = await AutoCompleteService.fetchSuggestions(query, 10);
+            // FAQItem[] 배열에서 question만 추출
+            return suggestions.map(item => item.question);
+        } catch (error) {
+            console.error('자동완성 데이터 로드 오류:', error);
+            return [];
+        }
+    };
+
+
 
     //챗봇 응답 시뮬레이션
     const simulateBotResponse = async (userMessage: string, currentMessages: Message[]) => {
@@ -142,7 +170,8 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
     };
 
     //자동완성 바로 전송 처리
-    const handleAutoCompleteAutoSend = (suggestion: string) => {
+    //자동완성 바로 전송 처리
+    const handleAutoCompleteAutoSend = async (suggestion: string) => {
         if (isTyping) return;
 
         const currentTime = getCurrentTime();
@@ -153,8 +182,38 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
             type: 'regular' as const
         }];
         setMessages(newMessages);
+        setIsTyping(true);
 
-        simulateBotResponse(suggestion, newMessages);
+        try {
+            // 백엔드에서 전체 FAQ 데이터 가져오기
+            const suggestions = await AutoCompleteService.fetchSuggestions(suggestion, 50);
+            
+            // 정확히 일치하는 질문 찾기
+            const matchedItem = suggestions.find(item => item.question === suggestion);
+
+            if (matchedItem && matchedItem.answer_content) {
+                // 자식 질문들 가져오기
+                const children = await AutoCompleteService.fetchChildrenByParentId(matchedItem.id);
+                // answer_content가 있으면 그것을 답변으로 사용
+                const botMessage: Message = {
+                    sender: '봇',
+                    text: normalizeMessage(matchedItem.answer_content),
+                    time: getCurrentTime(),
+                    type: 'regular' as const,
+                    children: children.length > 0 ? children as any : undefined
+                };
+                setMessages([...newMessages, botMessage]);
+            } else {
+                // 매칭되는 답변이 없으면 기본 응답
+                simulateBotResponse(suggestion, newMessages);
+            }
+        } catch (error) {
+            console.error('답변을 가져오는 중 오류:', error);
+            // 오류 발생 시 기본 응답 사용
+            simulateBotResponse(suggestion, newMessages);
+        } finally {
+            setIsTyping(false);
+        }
     };
 
     //FAQ 메시지 처리
@@ -253,6 +312,90 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
         setAutoInput(!autoInput);
     };
 
+    // 🔥 Action 버튼 클릭 처리 (학사일정 등)
+    const handleActionClick = async (actionType: string, title: string) => {
+        if (isTyping) return;
+
+        const currentTime = getCurrentTime();
+        
+        // 사용자 메시지 추가
+        const userMessage: Message = {
+            sender: '나',
+            text: title,
+            time: currentTime,
+            type: 'regular' as const
+        };
+
+        const newMessages = [...messages, userMessage];
+        setMessages(newMessages);
+        setIsTyping(true);
+
+        try {
+            let botResponse = '';
+
+            // action 타입에 따라 처리
+            if (actionType === 'calendar_this_month' || actionType === 'current_month_calendar') {
+                const calendarData = await CalendarService.getCurrentMonthCalendar();
+                botResponse = CalendarService.formatCalendarToText(calendarData);
+            } else {
+                botResponse = `${actionType} 액션은 아직 구현되지 않았습니다.`;
+            }
+
+            const botMessage: Message = {
+                sender: '봇',
+                text: botResponse,
+                time: getCurrentTime(),
+                type: 'regular' as const
+            };
+
+            setMessages([...newMessages, botMessage]);
+
+        } catch (error) {
+            console.error('Action 처리 중 오류:', error);
+            
+            const errorMessage: Message = {
+                sender: '봇',
+                text: '일정을 불러오는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+                time: getCurrentTime(),
+                isError: true,
+                type: 'regular' as const
+            };
+
+            setMessages([...newMessages, errorMessage]);
+        } finally {
+            setIsTyping(false);
+        }
+    };
+
+    // 🔥 Text 버튼 클릭 처리 (단순 텍스트 응답)
+    const handleTextClick = (answerContent: string, title: string) => {
+        if (isTyping) return;
+
+        const currentTime = getCurrentTime();
+        
+        // 사용자 메시지 추가
+        const userMessage: Message = {
+            sender: '나',
+            text: title,
+            time: currentTime,
+            type: 'regular' as const
+        };
+
+        const newMessages = [...messages, userMessage];
+        setMessages(newMessages);
+
+        // 봇 응답 추가
+        const botMessage: Message = {
+            sender: '봇',
+            text: normalizeMessage(answerContent),
+            time: getCurrentTime(),
+            type: 'regular' as const
+        };
+
+        setMessages([...newMessages, botMessage]);
+    };
+
+
     return (
         <div className="chat-container">
             {messages.length === 0 && (
@@ -288,13 +431,63 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
                                             onOptionSelect={handleFAQOptionClick}
                                         />
                                     ) : (
-                                        <div className={`message-bubble ${msg.sender === '나'
-                                            ? 'my-bubble'
-                                            : msg.isError
-                                                ? 'error-bubble'
-                                                : 'bot-bubble'
-                                            }`}>
-                                            {msg.text}
+                                        <div>
+                                            <div className={`message-bubble ${msg.sender === '나'
+                                                ? 'my-bubble'
+                                                : msg.isError
+                                                    ? 'error-bubble'
+                                                    : 'bot-bubble'
+                                                }`}
+                                                style={{ whiteSpace: 'pre-wrap' }}
+                                            >
+                                                {msg.text}
+                                            </div>
+                                            
+                                            {/* 🔥 이 부분 전체가 새로 추가된 코드! */}
+                                            {/* URL 타입 자식 질문들을 버튼으로 표시 */}
+                                            {msg.children && msg.children.length > 0 && (
+                                                <div className="faq-children-buttons">
+                                                    {msg.children
+                                                        .filter(child => 
+                                                            child.answer_type === 'url' || 
+                                                            child.answer_type === 'action' ||
+                                                            child.answer_type === 'text'  
+                                                        )
+                                                        .map((child) => (
+                                                            <button
+                                                                key={child.id}
+                                                                onClick={() => {
+                                                                    if (child.answer_type === 'url') {
+                                                                        window.open(child.answer_content || '#', '_blank');
+                                                                    } else if (child.answer_type === 'action') {
+                                                                        handleActionClick(child.answer_content || '', child.title);
+                                                                    }
+                                                                }}
+                                                            >
+                                                                {child.title}
+                                                            </button>
+                                                        ))
+                                                    }
+                                                </div>
+                                            )}
+                                            {/* 🔥 Card 타입 자식 질문들을 카드로 표시 - 이 부분 전체가 새로 추가! */}
+                                            {msg.children && msg.children.length > 0 && (
+                                                <div className="faq-children-cards">
+                                                    {msg.children
+                                                        .filter(child => child.answer_type === 'card')
+                                                        .sort((a, b) => (a.card_priority || 0) - (b.card_priority || 0))
+                                                        .map((child) => (
+                                                            <div key={child.id} className="faq-card">
+                                                                
+                                                                <div className="faq-card-content">
+                                                                    <div className="faq-card-title">{child.title}</div>
+                                                                    <div className="faq-card-answer">{normalizeMessage(child.answer_content || '')}</div>
+                                                                </div>
+                                                            </div>
+                                                        ))
+                                                    }
+                                                </div>
+                                            )}
                                         </div>
                                     )}
                                     <div className="message-time">{msg.time}</div>
@@ -357,6 +550,7 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
                         autoInputEnabled={autoInput}
                         className="input-wrapper"
                         //inputClassName="message-input"
+                        fetchSuggestions={fetchAutoCompleteSuggestions}
                         autoSend={true}
                         onAutoSend={handleAutoCompleteAutoSend}
                     />

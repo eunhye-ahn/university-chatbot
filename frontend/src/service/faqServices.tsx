@@ -145,7 +145,7 @@ const getFallbackFAQData = (faqId: number): FAQResponse => {
             id: 1,
             title: "챗봇 사용법",
             response: "안녕하세요! 저는 AI 챗봇입니다. 궁금한 것이 있으시면 언제든 질문해 주세요. 텍스트로 대화하실 수 있으며, 다양한 주제에 대해 도움을 드릴 수 있습니다.",
-            options: ["최근 학사일정 보러가기", "전체 학사일정 보러가기"]
+            options: ["이번달 학사일정 보러가기", "전체 학사일정 보러가기"]
 
         },
         2: {
