@@ -59,8 +59,8 @@ const FAQ: React.FC<FAQProps> = ({ isOpen, onClose, onSendMessage, onSubItemClic
     }, [isMaximized]);
 
     // FAQ 메인 카테고리 클릭 처리
-    const handleFAQClick = (label: string, id: number) => {
-        onSendMessage(label, id);
+    const handleFAQClick = (displayText: string, id: number) => {
+        onSendMessage(displayText, id);  // 파라미터로 받은 값 사용
         onClose();
     };
 
@@ -120,7 +120,7 @@ const FAQ: React.FC<FAQProps> = ({ isOpen, onClose, onSendMessage, onSubItemClic
                                 <div className="faq-item">
                                     <div
                                         className="faq-question"
-                                        onClick={() => handleFAQClick(item.label, item.id)}
+                                        onClick={() => handleFAQClick(item.displayText, item.id)}
                                     >
                                         {isMaximized ? (
                                             <div>

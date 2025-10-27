@@ -15,15 +15,19 @@ export interface FAQResponse {
 export interface FAQItem {
     id: number;
     title: ReactNode;
+    displayText: string;  // 메시지로 표시할 순수 텍스트
     description: ReactNode;
 }
 
 // 임시 FAQ 목록 (실제로는 서버에서 관리)
 export const FAQ_ITEMS: FAQItem[] = [
     {
-        id: 1, title: (<span className="faq-title-inline"><img src="/icons/schedule.svg" alt="학사일정" className="faq-icon" />
+        id: 1, 
+        title: (<span className="faq-title-inline"><img src="/icons/schedule.svg" alt="학사일정" className="faq-icon" />
             <span className="faq-title-text">학사일정</span>
-        </span>), description: (
+        </span>), 
+        displayText: "학사일정",
+        description: (
             <div>
                 학사일정이 궁금하신가요?<br />
                 학사일정 페이지에서 등록,수강,시험,휴복학, 졸업 등 연간 학사 일정을 확인할 수 있어요
@@ -31,60 +35,90 @@ export const FAQ_ITEMS: FAQItem[] = [
         )
     },
     {
-        id: 2, title: (<span className="faq-title-inline"><img src="/icons/curriculum.svg" alt="교육과정" className="faq-icon" />
+        id: 2, 
+        title: (<span className="faq-title-inline"><img src="/icons/curriculum.svg" alt="교육과정" className="faq-icon" />
             <span className="faq-title-text">교육과정</span>
-        </span>), description: (
+        </span>), 
+        displayText: "교육과정",
+        description: (
             <div>
                 교육과정 페이지에서 전공 및 교양과목, 이수 학점, 교육 목표 등 상세한 커리큘럼을 확인할 수 있어요.        </div>
         )
     },
     {
-        id: 3, title: (<span className="faq-title-inline"><img src="/icons/scholarship.svg" alt="장학금" className="faq-icon" />
+        id: 3, 
+        title: (<span className="faq-title-inline"><img src="/icons/scholarship.svg" alt="장학금" className="faq-icon" />
             <span className="faq-title-text">장학금</span>
-        </span>), description: (
+        </span>), 
+        displayText: "장학금",
+        description: (
             <div>
                 등록금 납부 일정 및 방법이 궁금하신가요?학부, 대학원 등록금 납부 일정 및 납부 방법에 관한 더 자세한 내용은 아래 버튼을 눌러 확인해보세요.
             </div>
         )
     },
-    { id: 4, title: (<span className="faq-title-inline"><img src="/icons/lab.svg" alt="실험실" className="faq-icon" />
+    { 
+        id: 4, 
+        title: (<span className="faq-title-inline"><img src="/icons/lab.svg" alt="실험실" className="faq-icon" />
             <span className="faq-title-text">실험실</span>
-        </span>), description: (
+        </span>), 
+        displayText: "실험실",
+        description: (
             <div>
  실험실 안내 페이지에서 이용 시간, 예약 방법, 안전 수칙 등 실험실 이용에 필요한 정보를 확인할 수 있어요.            </div>
         )
     },
-    { id: 5, title: (<span className="faq-title-inline"><img src="/icons/library.svg" alt="도서관" className="faq-icon" />
+    { 
+        id: 5, 
+        title: (<span className="faq-title-inline"><img src="/icons/library.svg" alt="도서관" className="faq-icon" />
             <span className="faq-title-text">도서관</span>
-        </span>), description: (
+        </span>), 
+        displayText: "도서관",
+        description: (
             <div>
  실험실 안내 페이지에서 이용 시간, 예약 방법, 안전 수칙 등 실험실 이용에 필요한 정보를 확인할 수 있어요.            </div>
         )
     },
-    { id: 6, title: (<span className="faq-title-inline"><img src="/icons/call.svg" alt="교내연락처" className="faq-icon" />
+    { 
+        id: 6, 
+        title: (<span className="faq-title-inline"><img src="/icons/call.svg" alt="교내연락처" className="faq-icon" />
             <span className="faq-title-text">교내연락처</span>
-        </span>), description: (
+        </span>), 
+        displayText: "교내연락처",
+        description: (
             <div>
  실험실 안내 페이지에서 이용 시간, 예약 방법, 안전 수칙 등 실험실 이용에 필요한 정보를 확인할 수 있어요.            </div>
         )
     },
-    { id: 7, title: (<span className="faq-title-inline"><img src="/icons/buss.svg" alt="셔틀버스" className="faq-icon" />
+    { 
+        id: 7, 
+        title: (<span className="faq-title-inline"><img src="/icons/buss.svg" alt="셔틀버스" className="faq-icon" />
             <span className="faq-title-text">셔틀버스</span>
-        </span>), description: (
+        </span>), 
+        displayText: "셔틀버스",
+        description: (
             <div>
  실험실 안내 페이지에서 이용 시간, 예약 방법, 안전 수칙 등 실험실 이용에 필요한 정보를 확인할 수 있어요.            </div>
         )
     },
-    { id: 8, title: (<span className="faq-title-inline"><img src="/icons/amenities.svg" alt="편의시설" className="faq-icon" />
+    { 
+        id: 8, 
+        title: (<span className="faq-title-inline"><img src="/icons/amenities.svg" alt="편의시설" className="faq-icon" />
             <span className="faq-title-text">편의시설</span>
-        </span>), description: (
+        </span>), 
+        displayText: "편의시설",
+        description: (
             <div>
  실험실 안내 페이지에서 이용 시간, 예약 방법, 안전 수칙 등 실험실 이용에 필요한 정보를 확인할 수 있어요.            </div>
         )
     },
-    { id: 9, title: (<span className="faq-title-inline"><img src="/icons/restaurant.svg" alt="식도락" className="faq-icon" />
+    { 
+        id: 9, 
+        title: (<span className="faq-title-inline"><img src="/icons/restaurant.svg" alt="식도락" className="faq-icon" />
             <span className="faq-title-text">식도락</span>
-        </span>), description: (
+        </span>), 
+        displayText: "식도락",
+        description: (
             <div>
  실험실 안내 페이지에서 이용 시간, 예약 방법, 안전 수칙 등 실험실 이용에 필요한 정보를 확인할 수 있어요.            </div>
         )
@@ -231,7 +265,7 @@ export const isFAQExists = (faqId: number): boolean => {
 
 // 모든 FAQ 제목 가져오기
 export const getAllFAQTitles = (): string[] => {
-    return FAQ_ITEMS.map(item => item.title);
+    return FAQ_ITEMS.map(item => item.displayText);
 };
 
 // FAQ ID로 기본 정보 가져오기 (API 호출 없이)
