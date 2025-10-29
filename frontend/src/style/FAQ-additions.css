@@ -39,7 +39,7 @@
     left : 0;
     right : 0;
     bottom : 0;
-    height: 100vh;
+    /* height: 100vh; */
     background-color: white;
     display: flex;
     flex-direction: column;
@@ -204,6 +204,7 @@
 
 .faq-sub-items {
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;             /* 버튼 사이 여백 */
   margin-top: 10px;
 }

@@ -3,7 +3,7 @@ import React from 'react';
 // 메시지 타입 정의
 interface Message {
     sender: string;
-    text: string;
+    text: string | React.ReactNode;
     time: string;
     isError?: boolean;
     type?: 'regular' | 'faq';

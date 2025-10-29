@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.routers.autocomplete import router as autocomplete_router
 from app.routers.calendar import router as calendar_router
+from app.routers.faq import router as faq_router
 
 # FastAPI 앱 생성
 app = FastAPI(
@@ -22,6 +23,7 @@ app.add_middleware(
 # 라우터 등록
 app.include_router(autocomplete_router)
 app.include_router(calendar_router)
+app.include_router(faq_router)
 
 # 루트 경로
 @app.get("/")
