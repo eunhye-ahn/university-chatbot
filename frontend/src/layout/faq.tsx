@@ -59,8 +59,10 @@ const FAQ: React.FC<FAQProps> = ({ isOpen, onClose, onSendMessage, onSubItemClic
     }, [isMaximized]);
 
     // FAQ 메인 카테고리 클릭 처리
-    const handleFAQClick = (label: string, id: number) => {
-        onSendMessage(label, id);
+    const handleFAQClick = (label: string | undefined, id: number) => {
+        // ✅ label이 undefined일 경우 기본값 사용
+        const title = label || `FAQ ${id}`;
+        onSendMessage(title, id);
         onClose();
     };
 
