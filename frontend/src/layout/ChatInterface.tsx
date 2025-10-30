@@ -5,7 +5,7 @@ import '../style/AutoComplete.css';
 import FAQ from '../../src/layout/faq';
 import FAQChatResponse from './faqChat';
 import AutoComplete, { type AutoCompleteRef } from './AutoComplete';
-import { fetchFAQData } from '../service/faqServices';
+import { fetchFAQData, normalizeMessage } from '../service/faqServices';
 import { AutoCompleteService } from '../service/autoCompleteService';
 import { CalendarService } from '../service/CalendarService';
 import React from 'react';
@@ -48,9 +48,7 @@ const getCurrentTime = () => {
     return `${ampm} ${displayHours}:${minutes.toString().padStart(2, '0')}`;
 };
 
-const normalizeMessage = (text: string): string => {
-    return text.replace(/\\n/g, '\n');
-};
+// 🔧 수정: normalizeMessage 중복 제거 - faqServices에서 import하여 사용
 
 interface ChatInterfaceProps {
     messages: Message[];
@@ -587,9 +585,12 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
                     </div>
 
 
+                    {/* 🔧 수정: onClick 핸들러 추가 - 전송 버튼 클릭 시 메시지 전송 */}
                     <button
                         type="button"
                         className='send-btn'
+                        onClick={handleSend}
+                        disabled={isTyping}
                     >
                         <img src="/icons/send.svg" alt="전송" />
                     </button>

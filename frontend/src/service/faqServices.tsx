@@ -1,13 +1,23 @@
 import type { ReactNode } from "react";
 import React from "react";
 
+// 🔧 수정: any 타입 제거 - FAQ 자식 질문 타입 명확히 정의
+export interface FAQChild {
+    id: number;
+    question: string;
+    title: string;
+    answer_type: 'text' | 'url' | 'action' | 'card';
+    answer_content: string | null;
+    show_in_chat: boolean;
+    card_priority?: number;
+}
 
 export interface FAQResponse {
     id: number;
     title: string;
     response: React.ReactNode;
     options?: string[];
-    children?: any[];
+    children?: FAQChild[];  // 수정: any[] → FAQChild[]
 }
 
 // FAQ 데이터 타입
@@ -115,14 +125,16 @@ export const FAQ_ITEMS: FAQItem[] = [
 ];
 
 
+// 🔧 수정: export 추가 - ChatInterface에서 import하여 사용 (중복 제거)
 // 🔥 백슬래시 n을 실제 줄바꿈으로 변환하는 함수
-const normalizeMessage = (text: string): React.ReactNode => {
+export const normalizeMessage = (text: string): React.ReactNode => {
     if (!text) return '';
     
-    // \\n을 실제 줄바꿈으로 변환
+    // 🔧 수정: 정규식 처리 순서 변경 - \n을 먼저 처리 후 \\n 처리
+    // (\\n을 먼저 처리하면 의도와 다른 결과 발생 가능)
     const normalized = text
-        .replace(/\\\\n/g, '\n')
-        .replace(/\\n/g, '\n');
+        .replace(/\\n/g, '\n')
+        .replace(/\\\\n/g, '\n');
     
     // 줄바꿈을 기준으로 split하고 <br />로 연결
     const lines = normalized.split('\n');
@@ -163,11 +175,15 @@ export const fetchFAQData = async (faqId: number): Promise<FAQResponse> => {
         // 백엔드 응답을 FAQResponse 형식으로 변환
         const faqData = result.data;
 
+        // 🔧 수정: any 타입 제거 - FAQChild 타입 사용
         // 🔥 show_in_chat이 true인 자식 질문만 필터링
-        const filteredChildren = faqData.children?.filter((child: any) => child.show_in_chat === true) || [];
+        const filteredChildren = (faqData.children as FAQChild[])?.filter(
+            (child: FAQChild) => child.show_in_chat === true
+        ) || [];
 
+        // 🔧 수정: any 타입 제거 - FAQChild 타입 사용
         // children에서 title을 options로 변환 (하위 호환성)
-        const options = filteredChildren.map((child: any) => child.title || child.question);
+        const options = filteredChildren.map((child: FAQChild) => child.title || child.question);
 
 
 
