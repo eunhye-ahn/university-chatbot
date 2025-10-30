@@ -409,3 +409,107 @@
 .send-btn >img {
     width : 30px;
 }
+
+/* FAQ 자식 질문 버튼 스타일 */
+.faq-children-buttons {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.faq-children-buttons button {
+    padding: 12px 20px;
+    background-color: #fff;
+    border: 2px solid #BADDFE;
+    border-radius: 8px;
+    color: #BADDFE;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.faq-children-buttons button:hover {
+    background-color: #BADDFE;
+    color: #fff;
+}
+
+.faq-children-buttons button:active {
+    transform: scale(0.98);
+}
+
+/* ==========================================
+   Card 타입: 카드 스타일
+   ========================================== */
+   .faq-children-cards {
+    margin-top: 8px; /* 부모 메시지와의 간격 */
+    display: flex;
+    gap: 8px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+}
+
+.faq-card {
+    /* 부모 메시지 버블(.bot-bubble)과 동일한 스타일 */
+    background-color: #F1F1F1;
+    border-radius: 18px;
+    border-top-left-radius: 4px; /* 왼쪽 위 꼬리 */
+    padding: 8px 12px;
+    word-wrap: break-word;
+    display: inline-block;
+    flex-shrink: 0;
+    max-width: 400px; /* 부모 메시지와 비슷한 너비 제한 */
+}
+
+.faq-card-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.faq-card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.faq-card-answer {
+    font-size: 14px;
+    line-height: 1.6;
+    color: #333;
+    white-space: pre-wrap;
+}
+
+/* 반응형: 모바일에서는 세로로 나열 */
+@media (max-width: 768px) {
+    .faq-children-cards {
+        flex-direction: column;
+    }
+    
+    .faq-card {
+        max-width: 100%;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
