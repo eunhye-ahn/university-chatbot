@@ -1,5 +1,5 @@
 """
-FastAPI 메인 애플리케이션
+FastAPI 메인 애플리케이션 - 통합 버전
 """
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -8,14 +8,19 @@ from contextlib import asynccontextmanager
 
 from app.config import settings
 from app.models.schemas import (
-    ChatRequest, 
-    ChatResponse, 
+    ChatRequest,
+    ChatResponse,
     HealthCheck,
     UserProfile
 )
 from app.models.session import session_store
 from app.services.chatbot import chatbot
+
+# 모든 라우터 import
 from app.routes import graduation, review_admin
+from app.routers.autocomplete import router as autocomplete_router
+from app.routers.calendar import router as calendar_router
+from app.routers.faq import router as faq_router
 
 
 # 앱 시작/종료 이벤트
@@ -35,8 +40,8 @@ async def lifespan(app: FastAPI):
 
 # FastAPI 앱 생성
 app = FastAPI(
-    title="School Chatbot API",
-    description="순천대학교 컴퓨터공학과 챗봇 API",
+    title="University Chatbot API",
+    description="순천대학교 통합 챗봇 API (챗봇 + FAQ + 자동완성)",
     version="1.0.0",
     lifespan=lifespan
 )
@@ -44,14 +49,21 @@ app = FastAPI(
 # CORS 설정
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # 프로덕션에서는 특정 도메인만 허용
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+# 라우터 등록
+# 챗봇 라우터 (당신 것)
 app.include_router(graduation.router)
 app.include_router(review_admin.router)
+
+# FAQ/자동완성 라우터 (다른 팀원 것)
+app.include_router(autocomplete_router)
+app.include_router(calendar_router)
+app.include_router(faq_router)
 
 
 @app.get("/", response_model=HealthCheck)
@@ -80,7 +92,7 @@ async def chat(request: ChatRequest):
         print(f"📬 새 요청 도착!")
         print(f"{'='*50}")
         
-        # 세션 관리 (기존 코드)
+        # 세션 관리
         session_id = request.session_id
         
         if not session_id:
@@ -107,7 +119,7 @@ async def chat(request: ChatRequest):
             if is_dummy:
                 print(f"⚠️ 더미 프로필 감지, 무시: {session_profile.admission_year}학번")
                 session_profile = None
-                
+        
         user_profile = request.user_profile if request.user_profile else session_profile
         
         session_store.add_message(session_id, {
@@ -124,15 +136,14 @@ async def chat(request: ChatRequest):
                 "role": msg["role"],
                 "content": msg["content"]
             })
-            
+        
         MAX_HISTORY = 2
         if len(history_for_llm) > MAX_HISTORY:
             history_for_llm = history_for_llm[-MAX_HISTORY:]
             print(f"  📊 히스토리 제한: {len(session_messages)-1}개 → {len(history_for_llm)}개")
-
         
         print(f"\n💬 대화 이력 ({len(history_for_llm)}개 메시지):")
-        for msg in history_for_llm[-6:]:  # 최근 6개만 출력
+        for msg in history_for_llm[-6:]:
             print(f"  {msg['role']}: {msg['content'][:50]}...")
         
         print(f"\n📨 요청 정보:")
@@ -146,7 +157,7 @@ async def chat(request: ChatRequest):
             user_profile=user_profile,
             history=history_for_llm
         )
-
+        
         if isinstance(result, dict) and 'user_profile' in result and result['user_profile']:
             session_store.update_profile(session_id, result['user_profile'])
             print(f"  ✅ 세션에 프로필 저장: {result['user_profile'].admission_year}학번")
