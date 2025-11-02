@@ -3,7 +3,7 @@ import { FAQ_ITEMS, fetchFAQData } from '../service/faqServices';
 import type { FAQResponse } from '../service/faqServices';
 
 // 세부 항목 정보 타입 (DB 연동 시 확장 예정)
-interface FAQSubItem {
+export interface FAQSubItem {
     text: string;
     index: number;
     parentId: number;
