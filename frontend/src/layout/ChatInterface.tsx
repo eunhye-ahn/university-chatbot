@@ -393,12 +393,12 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
     };
   
     return (
-        <div className="chat-container">
+        <div className={`chat-container ${messages.length > 0 ? 'chat-active' : 'chat-empty'}`}>
             {messages.length === 0 && (
                 <div className='flex flex-col items-center justify-end text-center h-full pb-2'>
-                    <img src="/icons/Mascot.svg" alt="마스코트" className="h-60 mb-8" />
+                    <img src="/icons/Mascot.svg" alt="마스코트" className="h-60 mb-8 Mascot" />
 
-                    <p>
+                    <p className='initialComment'>
                         안녕하세요 국립순천대학교 컴퓨터공학과 입니다.<br />
                         궁금한 것이 있다면 총장님에게 질문하세요!
                     </p>
@@ -557,7 +557,7 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
                         onAutoSend={handleAutoCompleteAutoSend}
                     />
 
-                    <div className="auto-input-controls">
+                    <div className="auto-input-controls target-element-3">
                         <div
                             className={`toggle-switch ${autoInput ? 'active' : ''}`}
                             onClick={handleAutoInputToggle}
