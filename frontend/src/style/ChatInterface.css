@@ -213,18 +213,18 @@
     }
 }
 
-/* FAQ 버튼과 입력창의 일정한 위치 유지 */
+/* FAQ 버튼과 입력창 간격 설정 */
 .chat-input {
     border: none;
     padding: 15px;
     display: flex;
-    flex-direction: row; /* 명시적으로 가로 배치 */
-    align-items: stretch; /* 세로 가운데 정렬 */
-    gap: 10px; /* FAQ 버튼과 입력창 사이 간격 */
+    flex-direction: row; 
+    align-items: stretch; 
+    gap: 10px; 
     background: transparent;
     box-shadow: none;
-    position: relative; /* 위치 기준점 설정 */
-    min-height: 90px; /* 최소 높이 보장으로 일정한 FAQ 버튼 위치 유지 */
+    position: relative;
+    min-height: 90px; 
     transform: translateY(0);}
 
 
@@ -234,12 +234,12 @@
     border: none;
     padding: 15px;
     display: flex;
-    flex-direction: row; /* 명시적으로 가로 배치 */
-    align-items: stretch; /* 세로 가운데 정렬 */
-    gap: 10px; /* FAQ 버튼과 입력창 사이 간격 */
+    flex-direction: row; 
+    align-items: stretch; 
+    gap: 10px; 
     background: transparent;
     box-shadow: none;
-    min-height: 90px; /* 최소 높이 보장으로 일정한 FAQ 버튼 위치 유지 */
+    min-height: 90px; 
 transform: translateY(0);
 }
 
@@ -247,10 +247,9 @@ transform: translateY(0);
     position: relative; 
     bottom: 0;
     left: 0;
-    /* transform: none; */
     width: 100%;
     margin-top: auto;
-            transform: translateY(70px); /* 살짝 아래로 이동 */
+            transform: translateY(70px);
     transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -431,6 +430,11 @@ transform: translateY(0);
   right: 8px;
   bottom: 6px;
   z-index: 70; 
+  cursor: pointer;
+}
+
+.send-btn:active {
+  transform: scale(0.99); /* 살짝 눌리는 느낌 */
 }
 
 .send-btn >img {
