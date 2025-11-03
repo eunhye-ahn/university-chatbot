@@ -27,9 +27,8 @@ const Header = ({ onResetChat }: HeaderProps) => {
       {/* 왼쪽: 새채팅 */}
       <button
         onClick={onResetChat}
-        className="
-         active:scale-[0.98] transition
-        "
+        className="target-element-1"
+      
       >
         <img src="/icons/NewChat.svg" alt="" className='h-8'/>
       </button>
@@ -43,7 +42,7 @@ const Header = ({ onResetChat }: HeaderProps) => {
       </a>
 
       <div
-        className="relative"
+        className="relative target-element-2"
         onMouseEnter={() => setShowLanguageMenu(true)}
         onMouseLeave={() => setShowLanguageMenu(false)}
       >

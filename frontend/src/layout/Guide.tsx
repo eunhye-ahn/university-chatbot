@@ -1,145 +1,185 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import '../style/Guide.css';
 
+interface GuideStep {
+    selector: string; // '.target-element', '#login-button' 등
+    description: string;
+    descriptionPosition?: 'top' | 'bottom' | 'left' | 'right';
+}
+
 const Guide: React.FC = () => {
-    const [isOpen, setIsOpen] = useState(false);
-    const [mode, setMode] = useState<'modal' | 'overlay'>('modal');
-    const [imageError, setImageError] = useState(false);
-    const [isHovered, setIsHovered] = useState(false);
+    const [currentStep, setCurrentStep] = useState(0);
+    const [spotlights, setSpotlights] = useState<Array<{
+        top: number;
+        left: number;
+        width: number;
+        height: number;
+        description: string;
+        descriptionPosition: 'top' | 'bottom' | 'left' | 'right';
+    }>>([]);
 
-    const openGuide = () => {
-        setIsOpen(true);
-        setMode('modal'); // 항상 이미지 모달로 시작
-        setImageError(false); // 이미지 오류 상태 리셋
-    };
+    const targetRef = useRef<HTMLElement | null>(null);
 
-    const closeGuide = () => {
-        setIsOpen(false);
-        setMode('modal'); // 닫을 때 기본 모드로 리셋
-    };
+    const guideSteps: GuideStep[] = [
+        { selector: '.target-element-1', description: '다른 주제로 대화하고 싶다면, 새로고침을 클릭해주세요',
+            descriptionPosition : 'top'
+         },
+        { selector: '.target-element-2', description: '쉽고 빠르게 원하는 언어로 소통해 보세요.' 
+            ,descriptionPosition : 'bottom'
+        },
+        { selector: '.target-element-3', description: '세 번째 단계입니다!' },
+    ];
 
-    const switchToOverlay = () => {
-        setMode('overlay');
-    };
-
-    // 이미지 로드 에러 처리
-    const handleImageError = () => {
-        setImageError(true);
-    };
-
-    // ESC 키로 닫기
     useEffect(() => {
-        const handleEscKey = (event: KeyboardEvent) => {
-            if (event.key === 'Escape' && isOpen) {
-                closeGuide();
-            }
+        const updatePositions = () => {
+            const positions = guideSteps.map(step => {
+                const element = document.querySelector(step.selector) as HTMLElement;
+                if (element) {
+                    const rect = element.getBoundingClientRect();
+                    return {
+                        top: rect.top - 5,
+                        left: rect.left - 5,
+                        width: rect.width + 10,
+                        height: rect.height + 5,
+                        description: step.description,
+                        descriptionPosition: step.descriptionPosition || 'bottom'
+                    };
+                }
+                return null;
+            }).filter(Boolean) as Array<{
+                top: number;
+                left: number;
+                width: number;
+                height: number;
+                description: string;
+                descriptionPosition: 'top' | 'bottom' | 'left' | 'right';
+            }>;
+
+            setSpotlights(positions);
         };
 
-        if (isOpen) {
-            document.addEventListener('keydown', handleEscKey);
-        }
-
+        updatePositions();
+        
+        window.addEventListener('resize', updatePositions);
+        window.addEventListener('scroll', updatePositions);
+        
         return () => {
-            document.removeEventListener('keydown', handleEscKey);
+            window.removeEventListener('resize', updatePositions);
+            window.removeEventListener('scroll', updatePositions);
         };
-    }, [isOpen]);
+    }, []);
 
-    if (!isOpen) return (
-        <button
-            onClick={openGuide}
-            className="guide-button"
-            aria-label="이용안내"
-        >
-            <img src={isHovered ? "/icons/Guide.svg" : "/icons/Guide_close.svg"} alt="이용안내"
-            onMouseEnter={()=> setIsHovered(true)}
-            onMouseLeave={()=> setIsHovered(false)}
-             />
-                <path 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round" 
-                    strokeWidth={2} 
-                    d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" 
-                />
-        </button>
-    );
+    // 설명 텍스트 위치 계산 함수
+    const getDescriptionStyle = (spotlight: typeof spotlights[0]) => {
+        const baseStyle = {
+            position: 'fixed' as const,
+            color: '#ffffff',
+            fontSize: '14px',
+            fontWeight: 'bold' as const,
+            zIndex: 1000,
+            padding: '8px 12px',
+        };
 
-    // 모드 1: 이미지 모달 + 좌우 버튼
-    if (mode === 'modal') {
-        return (
+        switch (spotlight.descriptionPosition) {
+            case 'top':
+                return {
+                    ...baseStyle,
+                    top: `${spotlight.top}px`,
+                    left: `${spotlight.left + spotlight.width}px`,
+                };
+            case 'bottom':
+                return {
+                    ...baseStyle,
+                    top: `${spotlight.top + spotlight.height + 10}px`,
+                    right: `20px`,
+
+                };
+            case 'left':
+                return {
+                    ...baseStyle,
+                    top: `${spotlight.top + spotlight.height / 2}px`,
+                    left: `${spotlight.left - 10}px`,
+                    transform: 'translate(-100%, -50%)'
+                };
+            case 'right':
+                return {
+                    ...baseStyle,
+                    top: `${spotlight.top + spotlight.height / 2}px`,
+                    left: `${spotlight.left + spotlight.width + 10}px`,
+                    transform: 'translateY(-50%)'
+                };
+            default:
+                return {
+                    ...baseStyle,
+                    top: `${spotlight.top + spotlight.height + 10}px`,
+                    left: `${spotlight.left + spotlight.width / 2}px`,
+                    transform: 'translateX(-50%)'
+                };
+        }
+    };
+    
+return (
+        <div className="guide-overlay-container">
+            {/* 회색 오버레이 */}
             <div 
-                className="guide-modal-overlay"
-            >
-                {/* 오버레이 우측 최상단 닫기 버튼 */}
-                <button
-                    onClick={closeGuide}
-                    className="guide-overlay-close-fixed"
-                    aria-label="닫기"
-                >
-                    ✕
-                </button>
-
-                {/* 왼쪽 < 버튼 (현재는 비활성, 추후 확장 가능) */}
-                <button 
-                    className="guide-nav-button guide-nav-left"
-                    aria-label="이전"
-                >
-                    &lt;
-                </button>
-
-                {/* 이미지 모달 (메인 컨텐츠) */}
-                <div 
-                    className="guide-image-container"
-                >
-                    {/* 이미지 요소 - public 폴더 경로 사용 */}
-                    <img 
-                        src="/image/guide-image.png"
-                        alt="이용안내 이미지"
-                        className="guide-main-image"
-                        onError={handleImageError}
-                        style={{ display: imageError ? 'none' : 'block' }}
+                style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    width: '100vw',
+                    height: '100vh',
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                    zIndex: 999
+                }}
+            />
+            
+            {/* 둥근 모서리 직사각형 spotlight */}
+{/* 모든 spotlight를 동시에 렌더링 */}
+            {spotlights.map((spotlight, index) => (
+                <React.Fragment key={index}>
+                    {/* 둥근 모서리 직사각형 spotlight */}
+                    <div
+                        style={{
+                            position: 'fixed',
+                            top: `${spotlight.top}px`,
+                            left: `${spotlight.left}px`,
+                            width: `${spotlight.width}px`,
+                            height: `${spotlight.height}px`,
+                            border: '3px solid #FFFFFF',
+                            borderRadius: '10px',
+                            zIndex: 1000,
+                            pointerEvents: 'none'
+                        }}
                     />
-                    
-                    {/* 이미지가 로드되지 않을 때를 위한 fallback */}
-                    <div 
-                        className="guide-image-fallback"
-                        style={{ display: imageError ? 'flex' : 'none' }}
-                    >
-                        <h2>이용안내</h2>
-                        <p>이미지를 불러올 수 없습니다</p>
-                        <p style={{ fontSize: '12px', marginTop: '10px', opacity: 0.7 }}>
-                            파일 경로: public/image/guide-image.png
-                        </p>
+
+                    <div style={getDescriptionStyle(spotlight)}>
+                        {spotlight.description}
                     </div>
-                </div>
+                </React.Fragment>
+                                    
+                //     <div
+                //         style={{
+                //             position: 'fixed',
+                //             top: `${spotlight.top}px`,
+                //             left: `${spotlight.left + spotlight.width}px`,
+                //             color: '#ffffff',
+                //             fontSize: '14px',
+                //             fontWeight: 'bold',
+                //             textAlign: 'center',
+                //             zIndex: 1000,
+                //             padding: '8px 12px',
 
-                {/* 오른쪽 > 버튼 (검은색 오버레이로 전환) */}
-                <button 
-                    className="guide-nav-button guide-nav-right"
-                    onClick={switchToOverlay}
-                    aria-label="단순 모드로 전환"
-                >
-                    &gt;
-                </button>
-            </div>
-        );
-    }
+                //             whiteSpace: 'nowrap'
+                //         }}
+                //     >
+                //         {spotlight.description}
+                //     </div>
+                // </React.Fragment>
+            ))}
+             </div>
 
-    // 모드 2: 검은색 오버레이만
-    return (
-        <div 
-            className="guide-simple-overlay"
-        >
-            {/* 닫기 버튼만 */}
-            <button
-                onClick={closeGuide}
-                className="guide-overlay-close"
-                aria-label="닫기"
-            >
-                <svg className="guide-close-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </button>
-        </div>
+
+
     );
 };
 

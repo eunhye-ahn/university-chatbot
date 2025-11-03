@@ -578,7 +578,7 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
 
                     <div className="auto-input-controls">
                         <div
-                            className={`toggle-switch ${autoInput ? 'active' : ''}`}
+                            className={`toggle-switch target-element-3 ${autoInput ? 'active' : ''}`}
                             onClick={handleAutoInputToggle}
                         >
                             <div className="toggle-circle"></div>
