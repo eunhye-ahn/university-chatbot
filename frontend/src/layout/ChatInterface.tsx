@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import '../style/ChatInterface.css';
 import '../style/FAQ-additions.css';
 import '../style/AutoComplete.css';
+import '../style/responsive.css'
 import FAQ from '../../src/layout/faq';
 import FAQChatResponse from './faqChat';
 import AutoComplete, { type AutoCompleteRef } from './AutoComplete';
@@ -393,11 +394,11 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
     };
   
     return (
+        <div className='chat-interface'>
         <div className={`chat-container ${messages.length > 0 ? 'chat-active' : 'chat-empty'}`}>
             {messages.length === 0 && (
-                <div className='flex flex-col items-center justify-end text-center h-full pb-2'>
-                    <img src="/icons/Mascot.svg" alt="마스코트" className="h-60 mb-8 Mascot" />
-
+                <div className='welcome-photo '>
+                    <img src="/icons/Mascot.svg" alt="마스코트" className="welcome-photo" />
                     <p className='initialComment'>
                         안녕하세요 국립순천대학교 컴퓨터공학과 입니다.<br />
                         궁금한 것이 있다면 총장님에게 질문하세요!
@@ -571,12 +572,15 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
                     <button
                         type="button"
                         className='send-btn'
+                        onClick={handleSend}
                     >
                         <img src="/icons/send.svg" alt="전송" />
                     </button>
                 </div>
             </div>
         </div>
+                </div>
+
     );
 };
 

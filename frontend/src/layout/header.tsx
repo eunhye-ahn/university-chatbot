@@ -21,7 +21,7 @@ const Header = ({ onResetChat }: HeaderProps) => {
         bg-[#BADDFE] backdrop-blur
         border-b border-slate-200
         flex items-center justify-between
-        px-4 sm:px-6 relative
+        px-4 relative
       "
     >
       {/* 왼쪽: 새채팅 */}
