@@ -137,7 +137,13 @@
     }
 } */
 
-@media (min-width: 375px) {
+@media (max-width: 412px) {
+        .header {
+        height: 52px;
+        width: 100px;
+        padding: 0 16px;
+    }
+
     .language-toggle-btn {
         padding: 8px 12px;  
         font-size: 14px; 
