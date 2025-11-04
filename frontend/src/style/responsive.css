@@ -1,0 +1,17 @@
+@media (max-width: 360px) {
+    .welcome-photo p {
+        font-size : 14px;
+    }
+    .welcome-photo img {
+        height: 50%;
+    }
+    .chat-container{
+        width: 90%;
+    }
+    .notice-label{
+        font-size: 10px;
+    }
+    .notice-text{
+        font-size: 10px;
+    }
+}

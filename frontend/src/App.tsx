@@ -24,9 +24,12 @@ const App = () => {
     return (
         <div>
             <Header onResetChat={resetChat} />
+
             <Notice />
-            <ChatInterface messages={messages} setMessages={setMessages} />  
-            <Guide />
+            <div className='main-container'>
+                <ChatInterface messages={messages} setMessages={setMessages} />  
+                <Guide />
+            </div>
         </div>
     );
 };

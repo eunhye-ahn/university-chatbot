@@ -2,10 +2,11 @@ import { useState, useEffect, useRef } from 'react';
 import '../style/ChatInterface.css';
 import '../style/FAQ-additions.css';
 import '../style/AutoComplete.css';
+import '../style/responsive.css'
 import FAQ from '../../src/layout/faq';
 import FAQChatResponse from './faqChat';
 import AutoComplete, { type AutoCompleteRef } from './AutoComplete';
-import { fetchFAQData, normalizeMessage } from '../service/faqServices';
+import { fetchFAQData } from '../service/faqServices';
 import { AutoCompleteService } from '../service/autoCompleteService';
 import { CalendarService } from '../service/CalendarService';
 import { ChatbotService } from '../service/chatbotService';
@@ -39,7 +40,9 @@ const getCurrentTime = () => {
     return `${ampm} ${displayHours}:${minutes.toString().padStart(2, '0')}`;
 };
 
-// 🔧 수정: normalizeMessage 중복 제거 - faqServices에서 import하여 사용
+const normalizeMessage = (text: string): string => {
+    return text.replace(/\\n/g, '\n');
+};
 
 interface ChatInterfaceProps {
     messages: Message[];
@@ -391,12 +394,12 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
     };
   
     return (
-        <div className="chat-container">
+        <div className='chat-interface'>
+        <div className={`chat-container ${messages.length > 0 ? 'chat-active' : 'chat-empty'}`}>
             {messages.length === 0 && (
-                <div className='flex flex-col items-center justify-end text-center h-full pb-2'>
-                    <img src="/icons/Mascot.svg" alt="마스코트" className="h-60 mb-8" />
-
-                    <p>
+                <div className='welcome-photo '>
+                    <img src="/icons/Mascot.svg" alt="마스코트" className="welcome-photo" />
+                    <p className='initialComment'>
                         안녕하세요 국립순천대학교 컴퓨터공학과 입니다.<br />
                         궁금한 것이 있다면 총장님에게 질문하세요!
                     </p>
@@ -555,7 +558,7 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
                         onAutoSend={handleAutoCompleteAutoSend}
                     />
 
-                    <div className="auto-input-controls">
+                    <div className="auto-input-controls target-element-3">
                         <div
                             className={`toggle-switch ${autoInput ? 'active' : ''}`}
                             onClick={handleAutoInputToggle}
@@ -566,18 +569,18 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
                     </div>
 
 
-                    {/* 🔧 수정: onClick 핸들러 추가 - 전송 버튼 클릭 시 메시지 전송 */}
                     <button
                         type="button"
                         className='send-btn'
                         onClick={handleSend}
-                        disabled={isTyping}
                     >
                         <img src="/icons/send.svg" alt="전송" />
                     </button>
                 </div>
             </div>
         </div>
+                </div>
+
     );
 };
 
