@@ -418,7 +418,7 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
                                         <div className='profile-image'>
                                             <img src="/icons/MascortFace.svg" alt="총장이" />
                                         </div>
-                                        <div className="bot-name">챗봇</div>
+                                        <div className="bot-name">총장이</div>
                                     </div>
                                 )}
 
