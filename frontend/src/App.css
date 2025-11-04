@@ -22,6 +22,6 @@ height: 100%;
 .main-container {
   height: calc(100vh - 100px); 
   display: flex;
-  justify-content: center; /* 가로 가운데 */
-  align-items: center; /* 세로 가운데 */
+  justify-content: center; 
+  align-items: center; 
 }
