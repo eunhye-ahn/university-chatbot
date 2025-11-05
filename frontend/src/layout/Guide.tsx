@@ -184,7 +184,7 @@ const Guide: React.FC = () => {
 
 
 return (
-        <div className="guide-overlay-container">
+        <div>
             {/* 회색 오버레이 */}
             <div 
                 style={{
