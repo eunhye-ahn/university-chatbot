@@ -55,6 +55,7 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
     const [isTyping, setIsTyping] = useState(false);
     const [showFAQ, setShowFAQ] = useState(false);
     const [autoInput, setAutoInput] = useState(false);
+    const elementRef = useRef<HTMLDivElement>(null);
 
    
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -76,7 +77,6 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
             return [];
         }
     };
-
 
 
     const fetchBotResponse = async (userMessage: string, currentMessages: Message[]) => {
@@ -336,7 +336,6 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
         }
     };
 
-    // 파일 상단에 이미 AutoCompleteService import 되어 있음
 
     const handleChildTextClick = async (child: {
         id: number;
