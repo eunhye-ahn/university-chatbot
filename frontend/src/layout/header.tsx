@@ -65,7 +65,9 @@ const Header = ({ onResetChat }: HeaderProps) => {
 
       {/* 가운데: 로고 */}
       <a
-        href="/"
+        href="https://www.scnu.ac.kr/SCNU/main.do"
+        target="_blank"
+        rel="noopener noreferrer"
         className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2 hover:opacity-90"
       >
         <img src="/icons/Logo.svg" alt="순천대학교 로고" className="h-8" />
