@@ -45,7 +45,7 @@ const Guide: React.FC = () => {
     const guideSteps: GuideStep[] = [
         { selector: '.target-element-1', description: '다른 주제로 대화하고 싶다면, 새로고침을 클릭해주세요',
             descriptionPosition : 'target-element-1'},
-        { selector: '.target-element-2', description: '쉽고 빠르게 원하는 언어로 소통해 보세요.' 
+        { selector: '.target-element-2', description: '쉽고 빠르게 원하는 언어로 소통해 보세요.(추후개발예정)' 
             ,descriptionPosition : 'target-element-2'
         },
         { selector: '.target-element-3', description: '자동완성을 통해 시간을 절약하세요.'
