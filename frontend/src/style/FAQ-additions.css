@@ -34,18 +34,21 @@
 
 /* 전체 화면 FAQ (최대화 상태) */
 .faq-fullscreen {
-    position: fixed;
-    top : 95px;
-    left : 0;
-    right : 0;
-    bottom : 0;
-    /* height: 100vh; */
-    background-color: white;
-    display: flex;
-    flex-direction: column;
-    z-index: 1001;
-    overflow: hidden;
-    justify-content: center;
+position: fixed;
+top: 0;
+  left: 0;
+  right: 0;
+bottom: 0;
+width: 100vw;
+height: calc(100vh-100px);
+margin-top:100px;
+padding:0 10vw;
+background-color: white;
+display: flex;
+flex-direction: column;
+z-index: 9999;
+overflow: hidden;
+justify-content: center;
 }
 
 .faq-scroll {
@@ -97,14 +100,14 @@
 .faq-fullscreen .faq-header {
   align-items: flex-start;      /* center -> flex-start */
   /* 선택: 본문과 좌우 여백을 맞추고 싶다면 아래처럼 패딩도 조정 */
-  padding: 20px 150px 8px;      /* .faq-fullscreen .faq-content 의 좌우 150px과 매칭 */
+  padding: 20px 40px 8px;      /* .faq-fullscreen .faq-content 의 좌우 150px과 매칭 */
 }
 
 .faq-fullscreen .faq-header h3 {
     text-align: left;
     width: 100%; 
     font-size: 30px;
-    margin-left: 30px;
+    margin-left: 0;
 }
 
 /* 컨트롤 버튼들 */
@@ -154,10 +157,10 @@
 
 .faq-fullscreen .faq-content {
 
-    max-width: 1200px;
+    max-width: 100%;
     width: 100%;
     padding: 20px;
-    margin: 0 150px;
+    margin: 0;
 }
 
 /* FAQ 아이템 */
