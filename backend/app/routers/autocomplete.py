@@ -26,22 +26,22 @@ def load_faq_data() -> List[Dict[Any, Any]]:
     
     # 캐시가 있으면 캐시된 데이터 반환
     if _cached_data is not None:
-        print("✅ 캐시된 데이터 사용")
+        # print("✅ 캐시된 데이터 사용")
         return _cached_data
     
-    print(f"📂 JSON 파일 로드: {JSON_FILE_PATH}")
+    # print(f"📂 JSON 파일 로드: {JSON_FILE_PATH}")
     
     try:
         # JSON 파일 읽기
         with open(JSON_FILE_PATH, 'r', encoding='utf-8') as f:
             data = json.load(f)
         
-        print(f"📊 전체 데이터: {len(data)}개")
+        # print(f"📊 전체 데이터: {len(data)}개")
         
         # autocomplete=true인 항목만 필터링
         filtered_data = [item for item in data if item.get('autocomplete') == True]
         
-        print(f"✅ autocomplete=true 항목: {len(filtered_data)}개")
+        # print(f"✅ autocomplete=true 항목: {len(filtered_data)}개")
         
         # 캐시 저장
         _cached_data = filtered_data
