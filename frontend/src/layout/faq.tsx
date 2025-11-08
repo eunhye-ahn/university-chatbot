@@ -7,8 +7,10 @@ import type { FAQResponse } from '../service/faqServices';
 
 // 세부 항목 정보 타입 (DB 연동 시 확장 예정)
 export interface FAQSubItem {
-    text: string;
-    index: number;
+    id: number;
+    title: string;
+    answer_type: 'text' | 'url' | 'action' | 'card';
+    answer_content: string | null;
     parentId: number;
     // 추후 DB 연동 시 추가될 필드들:
     // subItemId?: number;
@@ -49,7 +51,7 @@ const FAQ: React.FC<FAQProps> = ({ isOpen, onClose, onSendMessage, onSubItemClic
     // FAQ 세부 옵션 가져오기
     const getSubItems = (faqId: number): string[] => {
         const data = faqData[faqId];
-        return data?.options || [];
+        return data?.children || [];
     };
 
     // 최대화 시 모든 FAQ 데이터 미리 로드
@@ -71,10 +73,12 @@ const FAQ: React.FC<FAQProps> = ({ isOpen, onClose, onSendMessage, onSubItemClic
     };
 
     // 세부 항목 클릭 처리 (DB 연동 대비 구조화된 데이터 전달)
-    const handleSubItemClick = (optionText: string, parentId: number, optionIndex: number) => {
+    const handleSubItemClick = (child: any, parentId: number) => {
         const subItemData: FAQSubItem = {
-            text: optionText,
-            index: optionIndex,
+            id: child.id,
+            title: child.title,
+            answer_type: child.answer_type,
+            answer_content: child.answer_content ?? null,
             parentId: parentId,
             // 추후 DB 연동 시 추가 정보:
             // subItemId: calculateSubItemId(parentId, optionIndex),
@@ -139,13 +143,13 @@ const FAQ: React.FC<FAQProps> = ({ isOpen, onClose, onSendMessage, onSubItemClic
                         <div className="faq-loading">로딩 중...</div>
                       ) : subItems.length > 0 ? (
                         <div className="faq-sub-items">
-                          {subItems.map((optionText, subIndex) => (
+                          {subItems.map((child: any) => (
                             <button
-                              key={`${item.id}-${subIndex}`}
+                              key={`${item.id}-${child.id}`}
                               className="faq-sub-item-btn"
-                              onClick={() => handleSubItemClick(optionText, item.id, subIndex)}
+                              onClick={() => handleSubItemClick(child, item.id)}
                             >
-                              {optionText}
+                              {child.title}
                             </button>
                           ))}
                         </div>
