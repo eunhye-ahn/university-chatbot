@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 
-// 🔤 기본 테스트용 자동완성 단어 목록 (DB 연결 전까지 사용)
+// 🔤 기본 테스트용 자동완성 단어 목록 (DB 연결 전까지 사용하며 연결 이후에는 사용X.)
 const DEFAULT_AUTOCOMPLETE_SUGGESTIONS = [
     '안녕하세요',
     '안녕히가세요',
@@ -8,29 +8,6 @@ const DEFAULT_AUTOCOMPLETE_SUGGESTIONS = [
     '죄송합니다',
     '도움이 필요해요',
     '문의사항이 있어요',
-    '주문 확인',
-    '주문 취소',
-    '주문 변경',
-    '배송 조회',
-    '배송 문의',
-    '반품 신청',
-    '반품 문의',
-    '교환 신청',
-    '교환 문의',
-    '결제 문의',
-    '결제 오류',
-    '회원가입',
-    '로그인 문제',
-    '비밀번호 찾기',
-    '계정 문의',
-    '상품 문의',
-    '상품 추천',
-    '할인 혜택',
-    '쿠폰 사용',
-    '적립금 문의',
-    '고객센터',
-    '운영시간',
-    '연락처'
 ];
 
 interface AutoCompleteProps {

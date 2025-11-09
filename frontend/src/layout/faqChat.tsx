@@ -15,6 +15,7 @@ interface FAQChatResponseProps {
     onOptionSelect?: (option: string) => void;
 }
 
+// 기능1: FAQ 채팅 응답 컴포넌트 - FAQ 답변과 함께 선택 가능한 옵션 버튼들을 표시
 const FAQChatResponse: React.FC<FAQChatResponseProps> = ({ message, onOptionSelect }) => {
     return (
         <div className={`message-bubble ${
@@ -29,7 +30,7 @@ const FAQChatResponse: React.FC<FAQChatResponseProps> = ({ message, onOptionSele
                 {message.text}
             </div>
 
-            {/* FAQ 옵션 버튼들 */}
+            {/* 기능2: FAQ 옵션 버튼 - 사용자가 선택할 수 있는 후속 질문 버튼들을 표시 */}
             {message.faqOptions && message.faqOptions.length > 0 && (
                 <div className="faq-options">
                     {message.faqOptions.map((option, index) => (
