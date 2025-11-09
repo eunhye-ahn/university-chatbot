@@ -235,26 +235,97 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
         }
     };
 
-    const handleFAQSubItemClick = (subItem: { 
-        text: string;
-        index: number;
+
+    const handleFAQSubItemClick = async (subItem: { 
+        id: number;
+        title: string;
+        answer_type: string;
+        answer_content: string | null;
         parentId: number;
     }) => {
         if (isTyping) return;
-
+    
         const currentTime = getCurrentTime();
+        
+        // 사용자 메시지 추가
         const userMessage: Message = {
             sender: '나',
-            text: subItem.text, 
+            text: subItem.title, 
             time: currentTime,
             type: 'regular' as const
         };
-
+    
         const messagesWithUser = [...messages, userMessage];
         setMessages(messagesWithUser);
-
-        fetchBotResponse(subItem.text, messagesWithUser);
+        setIsTyping(true);
+    
+        try {
+            // answer_type에 따라 처리
+            if (subItem.answer_type === 'text') {
+                // 텍스트 답변
+                const children = await AutoCompleteService.fetchChildrenByParentId(subItem.id);
+                
+                const botMessage: Message = {
+                    sender: '봇',
+                    text: normalizeMessage(subItem.answer_content || '답변 내용이 없습니다.'),
+                    time: getCurrentTime(),
+                    type: 'regular' as const,
+                    children: children.length > 0 ? children : undefined
+                };
+                
+                setMessages([...messagesWithUser, botMessage]);
+                
+            } else if (subItem.answer_type === 'url') {
+                // URL 열기
+                window.open(subItem.answer_content || '#', '_blank');
+                setIsTyping(false);
+                return;
+                
+            } else if (subItem.answer_type === 'action') {
+                // 액션 처리
+                let botResponse = '';
+                
+                if (subItem.answer_content === 'calendar_this_month' || 
+                    subItem.answer_content === 'current_month_calendar') {
+                    const calendarData = await CalendarService.getCurrentMonthCalendar();
+                    botResponse = CalendarService.formatCalendarToText(calendarData);
+                } else {
+                    botResponse = `${subItem.answer_content} 액션은 아직 구현되지 않았습니다.`;
+                }
+                
+                const botMessage: Message = {
+                    sender: '봇',
+                    text: botResponse,
+                    time: getCurrentTime(),
+                    type: 'regular' as const
+                };
+                
+                setMessages([...messagesWithUser, botMessage]);
+                
+            } else {
+                // 기타: 챗봇 API 호출
+                await fetchBotResponse(subItem.title, messagesWithUser);
+                return;
+            }
+    
+        } catch (error) {
+            console.error('FAQ 세부 항목 처리 중 오류:', error);
+            
+            const errorMessage: Message = {
+                sender: '봇',
+                text: '답변을 불러오는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+                time: getCurrentTime(),
+                isError: true,
+                type: 'regular' as const
+            };
+    
+            setMessages([...messagesWithUser, errorMessage]);
+        } finally {
+            setIsTyping(false);
+        }
     };
+
+
 
     const handleFAQOptionClick = (option: string) => {
         if (isTyping) return;
