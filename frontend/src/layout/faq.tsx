@@ -12,7 +12,7 @@ export interface FAQSubItem {
     answer_type: 'text' | 'url' | 'action' | 'card';
     answer_content: string | null;
     parentId: number;
-    // 추후 DB 연동 시 추가될 필드들:
+    // 추후 DB 연동 시 추가 가능할 필드 목록:
     // subItemId?: number;
     // category?: string;
     // priority?: number;
@@ -31,6 +31,7 @@ const FAQ: React.FC<FAQProps> = ({ isOpen, onClose, onSendMessage, onSubItemClic
     const [faqData, setFaqData] = useState<Record<number, FAQResponse>>({});
     const [loadingStates, setLoadingStates] = useState<Record<number, boolean>>({});
 
+    // 기능1 : FAQ 데이터 로드 - 서버에서 FAQ 세부 옵션 데이터를 가져옴
     // FAQ 데이터 로드 함수 (에러 처리 및 로딩 상태 개선)
     const loadFAQData = async (faqId: number) => {
         if (faqData[faqId] || loadingStates[faqId]) return;
@@ -49,12 +50,12 @@ const FAQ: React.FC<FAQProps> = ({ isOpen, onClose, onSendMessage, onSubItemClic
     };
 
     // FAQ 세부 옵션 가져오기
-    const getSubItems = (faqId: number): string[] => {
+    const getSubItems = (faqId: number): any[] => {
         const data = faqData[faqId];
         return data?.children || [];
     };
 
-    // 최대화 시 모든 FAQ 데이터 미리 로드
+    // 기능2 : 전체보기 모드 데이터 미리 로드 - 최대화 시 모든 FAQ 데이터를 미리 로드함(한 번에 불러오기)
     useEffect(() => {
         if (isMaximized) {
             FAQ_ITEMS.forEach(item => {
@@ -64,7 +65,7 @@ const FAQ: React.FC<FAQProps> = ({ isOpen, onClose, onSendMessage, onSubItemClic
     }, [isMaximized]);
 
 
-    // FAQ 메인 카테고리 클릭 처리
+    // 기능3 : FAQ 메인 카테고리 클릭 처리 - FAQ 항목을 선택하면 채팅창에 메시지 전송
     const handleFAQClick = (label: string | undefined, id: number) => {
         // label이 undefined일 경우 기본값 사용
         const title = label || `FAQ ${id}`;
@@ -72,7 +73,7 @@ const FAQ: React.FC<FAQProps> = ({ isOpen, onClose, onSendMessage, onSubItemClic
         onClose();
     };
 
-    // 세부 항목 클릭 처리 (DB 연동 대비 구조화된 데이터 전달)
+    // 기능4 : 세부 항목 클릭 처리 - FAQ 하위 옵션 클릭 시, DB 연동 대비 구조화된 데이터 전달
     const handleSubItemClick = (child: any, parentId: number) => {
         const subItemData: FAQSubItem = {
             id: child.id,
@@ -80,7 +81,7 @@ const FAQ: React.FC<FAQProps> = ({ isOpen, onClose, onSendMessage, onSubItemClic
             answer_type: child.answer_type,
             answer_content: child.answer_content ?? null,
             parentId: parentId,
-            // 추후 DB 연동 시 추가 정보:
+            // 추후 DB 연동 시 추가 가능할 정보:
             // subItemId: calculateSubItemId(parentId, optionIndex),
             // category: getParentCategory(parentId),
             // priority: getOptionPriority(optionText)
@@ -137,10 +138,11 @@ const FAQ: React.FC<FAQProps> = ({ isOpen, onClose, onSendMessage, onSubItemClic
                     </div>
                   </div>
 
+                  {/* 기능5: 세부 옵션 표시 - 전체보기 모드에서만 하위 옵션 버튼들 표시 */}    
                   {isMaximized && (
                     <div className="faq-sub-section">
                       {isLoading ? (
-                        <div className="faq-loading">로딩 중...</div>
+                        <div className="faq-loading">로딩중...</div>
                       ) : subItems.length > 0 ? (
                         <div className="faq-sub-items">
                           {subItems.map((child: any) => (
@@ -169,9 +171,12 @@ const FAQ: React.FC<FAQProps> = ({ isOpen, onClose, onSendMessage, onSubItemClic
         </div>
       </div>
     </div>
-  );    return isMaximized
-  ? createPortal(faqContent, document.body)
-  : faqContent;
+  );    
+  
+  // 기능6: 포털 렌더링 - 전체보기 모드는 전체 화면으로, 일반 모드는 일반 위치에 렌더링
+  return isMaximized
+    ? createPortal(faqContent, document.body)
+    : faqContent;
 
 };
 
