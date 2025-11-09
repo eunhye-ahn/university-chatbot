@@ -8,6 +8,7 @@ const Header = ({ onResetChat }: HeaderProps) => {
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
   const [currentLanguage, setCurrentLanguage] = useState<'한국어' | 'English'>('한국어');
 
+  // 기능1: 언어 변경 처리 - 사용자가 선택한 언어로 변경하고 메뉴를 닫음
   const handleLanguageChange = (language: '한국어' | 'English') => {
     setCurrentLanguage(language);
     setShowLanguageMenu(false);
@@ -24,7 +25,7 @@ const Header = ({ onResetChat }: HeaderProps) => {
         px-4 relative
       "
     >
-      {/* 왼쪽: 새채팅 */}
+      {/* 기능2: 새채팅 버튼 - 채팅 내역을 초기화하고 새로운 대화를 시작 */}
       <button
         onClick={onResetChat}
         className="
@@ -34,7 +35,7 @@ const Header = ({ onResetChat }: HeaderProps) => {
         <img src="/icons/NewChat.svg" alt="" className='h-8'/>
       </button>
 
-      {/* 가운데: 로고 */}
+      {/* 기능3: 로고 - 순천대학교 홈페이지로 연결되는 로고 */}
       <a
         href="https://www.scnu.ac.kr/SCNU/main.do" target='_blank'
         className="absolute left-1/2 -translate-x-1/2 flex items-center gap-2 hover:opacity-90"
@@ -42,6 +43,7 @@ const Header = ({ onResetChat }: HeaderProps) => {
         <img src="/icons/Logo.svg" alt="순천대학교 로고" className="h-8" />
       </a>
 
+      {/* 기능4: 언어 선택 메뉴 - 한국어/영어 선택 기능 (추후 개발 예정) */}
       <div
         className="relative target-element-2"
         onMouseEnter={() => setShowLanguageMenu(true)}
@@ -61,6 +63,7 @@ const Header = ({ onResetChat }: HeaderProps) => {
           </svg>
         </div>
 
+        {/* 기능5: 언어 선택 드롭다운 - 마우스 호버 시 언어 선택 옵션 표시 */}
         {showLanguageMenu && (
           <div
             className="

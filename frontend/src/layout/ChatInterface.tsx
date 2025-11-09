@@ -31,6 +31,8 @@ interface Message {
     }>;    
 }
 
+
+// 기능1 : 현재 시간 출력 방식 설정 - 메세지 시간을 [오전/오후 시:분] 형식으로 표시
 const getCurrentTime = () => {
     const now = new Date();
     const hours = now.getHours();
@@ -40,6 +42,7 @@ const getCurrentTime = () => {
     return `${ampm} ${displayHours}:${minutes.toString().padStart(2, '0')}`;
 };
 
+// 기능2 : 메세지 텍스트 정규화 - 줄바꿈 문자는 실제 줄바꿈으로 변환함
 const normalizeMessage = (text: string): string => {
     return text.replace(/\\n/g, '\n');
 };
@@ -61,13 +64,14 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const autoCompleteRef = useRef<AutoCompleteRef>(null);
 
-    
+    // 기능3 : 채팅창 자동 스크롤 - 새 메세지가 추가적으로 입력되면 채팅창 자동 스크롤
     useEffect(() => {
         if (messagesEndRef.current) {
             messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
         }
     }, [messages, isTyping]);
 
+    // 기능4: 자동완성 검색 - 입력값에 맞는 자동완성 제안 목록을 가져옴
     const fetchAutoCompleteSuggestions = async (query: string): Promise<string[]> => {
         try {
             const suggestions = await AutoCompleteService.fetchSuggestions(query, 10);
@@ -79,6 +83,7 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
     };
 
 
+    // 기능5 : 챗봇 응답 가져오기 - 사용자 메시지를 서버로 전송하고 응답을 받아옴
     const fetchBotResponse = async (userMessage: string, currentMessages: Message[]) => {
         setIsTyping(true);
 
@@ -123,6 +128,7 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
         }
     };
 
+    // 기능6 : 메시지 전송 - 사용자가 입력한 메시지를 채팅창에 추가하고 챗봇 응답 요청
     const handleSend = () => {
         const currentTime = getCurrentTime();
 
@@ -140,11 +146,13 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
         }
     };
 
+    // 기능7 : 자동완성 선택 - 자동완성 항목을 선택하면 입력창에 텍스트 입력
     const handleAutoCompleteSelect = (suggestion: string) => {
         setMessage(suggestion);
         autoCompleteRef.current?.focus();
     };
 
+    // 기능8 : 자동완성 바로 전송 - 자동완성 항목 클릭 시 즉시 메시지 전송
     const handleAutoCompleteAutoSend = async (suggestion: string) => {
         if (isTyping) return;
 
@@ -185,6 +193,7 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
         }
     };
 
+    // 기능9 : FAQ 메시지 전송 - FAQ 항목을 선택하면 해당 질문을 채팅창에 추가
     const handleFAQMessage = async (faqTitle: string, faqId: number) => {
         if (isTyping) return;
 
@@ -236,6 +245,7 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
     };
 
 
+    // 기능10 : FAQ 세부 항목 클릭 - FAQ 하위 옵션을 선택하면 해당 답변 표시
     const handleFAQSubItemClick = async (subItem: { 
         id: number;
         title: string;
@@ -326,7 +336,7 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
     };
 
 
-
+    // 기능11 : FAQ 옵션 클릭 - FAQ 응답의 후속 옵션을 클릭하면 해당 질문 전송
     const handleFAQOptionClick = (option: string) => {
         if (isTyping) return;
 
@@ -344,6 +354,7 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
         fetchBotResponse(option, messagesWithUser);
     };
 
+    // 기능12: 키보드 이벤트 처리 - Enter 키로 메시지 전송, Shift+Enter로 줄바꿈
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (e.key === 'Enter' && !e.shiftKey && !isTyping) {
             e.preventDefault();
@@ -351,10 +362,12 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
         }
     };
 
+    // 기능13 : 자동완성 토글 - 자동완성 기능 on/off 전환
     const handleAutoInputToggle = () => {
         setAutoInput(!autoInput);
     };
 
+    // 기능14 : 액션 버튼 클릭 (ACTION 타입) - 시각적+반응적 자료 출력 등 특정 동작 실행
     const handleActionClick = async (actionType: string, title: string) => {
         if (isTyping) return;
 
@@ -407,7 +420,7 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
         }
     };
 
-
+    // 기능15 : 자식 질문 클릭 (TEXT 타입) - 연관 질문을 클릭하면 해당 답변 가져오기
     const handleChildTextClick = async (child: {
         id: number;
         title: string;
@@ -466,17 +479,18 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
     return (
         <div className='chat-interface'>
         <div className={`chat-container ${messages.length > 0 ? 'chat-active' : 'chat-empty'}`}>
+            {/* 기능16: 환영 메시지 - 대화 시작 시 표시되는 초기 화면 */}
             {messages.length === 0 && (
                 <div className='welcome-photo '>
                     <img src="/icons/Mascot.svg" alt="마스코트" className="welcome-photo" />
                     <p className='initialComment'>
                         안녕하세요 국립순천대학교 컴퓨터공학과 입니다.<br />
-                        궁금한 것이 있다면 총장님에게 질문하세요!
+                        궁금한 것이 있다면 마스코트 총장이에게 질문하세요!
                     </p>
                 </div>
             )}
 
-
+            {/* 기능17: 메시지 목록 표시 - 사용자와 챗봇의 대화 내역을 표시 */}
             {messages.length > 0 && (
                 <div className="chat-messages">
                     <div className='chat-inner'>
@@ -513,7 +527,7 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
                                             </div>
                                             
                                             
-                                            {/* URL / Action / TEXT 타입 자식 질문들을 버튼으로 표시 */}
+                                            {/* 기능18 : URL / Action / TEXT 타입 자식 질문들을 버튼으로 표시 */}
                                             {msg.children && msg.children.length > 0 && (
                                                 <div className="faq-children-buttons">
                                                     {msg.children
@@ -543,7 +557,7 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
                                                 )}
 
                                             
-                                            {/* Card 타입 자식 질문들을 카드로 표시 */}
+                                            {/* 기능 19 : Card 타입 자식 질문들을 카드로 표시 - 연관 정보를 카드 형태로 표시 */}
                                             {msg.children && msg.children.length > 0 && (
                                                 <div className="faq-children-cards">
                                                     {msg.children
@@ -567,6 +581,7 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
                             </div>
                         ))}
 
+                        {/* 기능20: 로딩 인디케이터 - 챗봇의 답변을 기다리는 동안 표시 */}
                         {isTyping && (
                             <div className="message-row bot-message-row">
                                 <div className="profile-and-name">
@@ -592,6 +607,7 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
                 </div>
             )}
 
+            {/* 기능21: 채팅 입력박스 영역 - FAQ 버튼, 입력창, 자동완성 토글, 전송 버튼 */}
             <div className="chat-input">
                 <div className="faq-wrapper">
                     <button
@@ -628,6 +644,7 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
                         onAutoSend={handleAutoCompleteAutoSend}
                     />
 
+                    {/* 기능22: 자동완성 토글 스위치 - 자동완성 기능을 켜고 끌 수 있는 버튼 */}    
                     <div className="auto-input-controls target-element-3">
                         <div
                             className={`toggle-switch ${autoInput ? 'active' : ''}`}
@@ -638,7 +655,7 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
                         <span className="auto-input-label">자동완성</span>
                     </div>
 
-
+                    {/* 기능23: 전송 버튼 - 작성한 메시지를 전송 */}    
                     <button
                         type="button"
                         className='send-btn'
