@@ -1,14 +1,14 @@
 import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 
-// 🔤 기본 테스트용 자동완성 단어 목록 (DB 연결 전까지 사용하며 연결 이후에는 사용X.)
-const DEFAULT_AUTOCOMPLETE_SUGGESTIONS = [
-    '안녕하세요',
-    '안녕히가세요',
-    '감사합니다',
-    '죄송합니다',
-    '도움이 필요해요',
-    '문의사항이 있어요',
-];
+// 기본 테스트용 자동완성 단어 목록 (DB 연결 전까지 사용하며 연결 이후에는 사용X.)
+// const DEFAULT_AUTOCOMPLETE_SUGGESTIONS = [
+//     '안녕하세요',
+//     '안녕히가세요',
+//     '감사합니다',
+//     '죄송합니다',
+//     '도움이 필요해요',
+//     '문의사항이 있어요',
+// ];
 
 interface AutoCompleteProps {
     value: string;
@@ -19,7 +19,7 @@ interface AutoCompleteProps {
     disabled?: boolean;
     autoInputEnabled: boolean;
     className?: string;
-    // 🔗 DB 연동을 위한 선택적 props
+    // DB 연동을 위한 선택적 props
     suggestions?: string[];                                        // 미리 가져온 단어 목록
     fetchSuggestions?: (query: string) => Promise<string[]> | string[];  // 실시간 검색 함수
     autoSend?: boolean;                                           // 클릭 시 바로 전송 여부
@@ -45,23 +45,23 @@ const AutoComplete = forwardRef<AutoCompleteRef, AutoCompleteProps>(({
     autoSend = false,
     onAutoSend
 }, ref) => {
-    // 🔧 자동완성 상태 관리
+    // 자동완성 상태 관리
     const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
     const [selectedIndex, setSelectedIndex] = useState(-1);
     const [isLoading, setIsLoading] = useState(false);
     
-    // 📍 DOM 참조 - textarea 사용
+    // DOM 참조 - textarea 사용
     const inputRef = useRef<HTMLTextAreaElement>(null);
     const suggestionsRef = useRef<HTMLDivElement>(null);
 
-    // 🎯 부모 컴포넌트에서 포커스 제어할 수 있도록 설정
+    // 부모 컴포넌트에서 포커스 제어할 수 있도록 설정
     useImperativeHandle(ref, () => ({
         focus: () => inputRef.current?.focus(),
         blur: () => inputRef.current?.blur()
     }));
 
-    // 🔍 자동완성 단어 필터링 및 검색
+    // 자동완성 단어 필터링 및 검색
     const filterSuggestions = async (query: string) => {
         if (!autoInputEnabled || !query.trim()) {
             setFilteredSuggestions([]);
@@ -81,9 +81,10 @@ const AutoComplete = forwardRef<AutoCompleteRef, AutoCompleteProps>(({
                 suggestionsToFilter = result;
             } else if (externalSuggestions) {
                 suggestionsToFilter = externalSuggestions;
-            } else {
-                suggestionsToFilter = DEFAULT_AUTOCOMPLETE_SUGGESTIONS;
             }
+            //  else {
+            //     suggestionsToFilter = DEFAULT_AUTOCOMPLETE_SUGGESTIONS;
+            // }
 
             // 입력값과 매칭되는 단어들 필터링
             const filtered = suggestionsToFilter.filter(suggestion =>
@@ -103,12 +104,12 @@ const AutoComplete = forwardRef<AutoCompleteRef, AutoCompleteProps>(({
         }
     };
 
-    // 🔄 입력값 변경 시 자동완성 업데이트
+    // 입력값 변경 시 자동완성 업데이트
     useEffect(() => {
         filterSuggestions(value);
     }, [value, autoInputEnabled, externalSuggestions]);
 
-    // 🔄 자동완성 토글 변경 시 즉시 반응
+    // 자동완성 토글 변경 시 즉시 반응
     useEffect(() => {
         if (!autoInputEnabled) {
             setShowSuggestions(false);
@@ -116,7 +117,7 @@ const AutoComplete = forwardRef<AutoCompleteRef, AutoCompleteProps>(({
         }
     }, [autoInputEnabled]);
 
-    // 🖱️ 외부 클릭 시 자동완성 드롭다운 숨기기
+    // 외부 클릭 시 자동완성 드롭다운 숨기기
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (suggestionsRef.current && !suggestionsRef.current.contains(event.target as Node) &&
@@ -132,7 +133,7 @@ const AutoComplete = forwardRef<AutoCompleteRef, AutoCompleteProps>(({
         };
     }, []);
 
-    // ✅ 자동완성 항목 선택 처리
+    // 자동완성 항목 선택 처리
     const handleSuggestionSelect = (suggestion: string) => {
         if (autoSend && onAutoSend) {
             // ⚡ 바로 전송 모드: 입력창 초기화 후 즉시 전송
@@ -141,7 +142,7 @@ const AutoComplete = forwardRef<AutoCompleteRef, AutoCompleteProps>(({
             setSelectedIndex(-1);
             onAutoSend(suggestion);
         } else {
-            // 📝 일반 모드: 입력창에 텍스트만 입력
+            // 일반 모드: 입력창에 텍스트만 입력
             onSelect(suggestion);
             setShowSuggestions(false);
             setSelectedIndex(-1);
@@ -149,7 +150,7 @@ const AutoComplete = forwardRef<AutoCompleteRef, AutoCompleteProps>(({
         }
     };
 
-    // ⌨️ 키보드 네비게이션 처리 - textarea용
+    // 키보드 네비게이션 처리 - textarea용
     const handleKeyDown = (e: React.KeyboardEvent) => {
         if (showSuggestions && filteredSuggestions.length > 0) {
             switch (e.key) {
@@ -186,12 +187,12 @@ const AutoComplete = forwardRef<AutoCompleteRef, AutoCompleteProps>(({
         onKeyDown?.(e);
     };
 
-    // 📝 입력값 변경 처리 - textarea용
+    // 입력값 변경 처리 - textarea용
     const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         onChange(e.target.value);
     };
 
-    // 🎯 입력창 포커스 시 자동완성 표시
+    // 입력창 포커스 시 자동완성 표시
     const handleFocus = () => {
         if (autoInputEnabled && value.trim() && filteredSuggestions.length > 0) {
             setShowSuggestions(true);
@@ -200,7 +201,7 @@ const AutoComplete = forwardRef<AutoCompleteRef, AutoCompleteProps>(({
 
     return (
         <div className={`autocomplete-wrapper ${className}`}>
-            {/* ⌨️ 입력창 - textarea로 박스 전체 활용 */}
+            {/* 입력창 - textarea로 박스 전체 활용 */}
             <textarea 
                 ref={inputRef}
                 value={value}
@@ -214,7 +215,7 @@ const AutoComplete = forwardRef<AutoCompleteRef, AutoCompleteProps>(({
                 style={{ resize: 'none', overflow: 'hidden' }}
             />
             
-            {/* 📋 자동완성 드롭다운 */}
+            {/* 자동완성 드롭다운 */}
             {showSuggestions && filteredSuggestions.length > 0 && autoInputEnabled && (
                 <div ref={suggestionsRef} className="autocomplete-dropdown">
                     {isLoading ? (
