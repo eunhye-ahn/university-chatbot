@@ -1,14 +1,14 @@
 import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 
-// 🔤 기본 테스트용 자동완성 단어 목록 (DB 연결 전까지 사용하며 연결 이후에는 사용X.)
-const DEFAULT_AUTOCOMPLETE_SUGGESTIONS = [
-    '안녕하세요',
-    '안녕히가세요',
-    '감사합니다',
-    '죄송합니다',
-    '도움이 필요해요',
-    '문의사항이 있어요',
-];
+// 기본 테스트용 자동완성 단어 목록 (DB 연결 전까지 사용하며 연결 이후에는 사용X.)
+// const DEFAULT_AUTOCOMPLETE_SUGGESTIONS = [
+//     '안녕하세요',
+//     '안녕히가세요',
+//     '감사합니다',
+//     '죄송합니다',
+//     '도움이 필요해요',
+//     '문의사항이 있어요',
+// ];
 
 interface AutoCompleteProps {
     value: string;
@@ -81,9 +81,10 @@ const AutoComplete = forwardRef<AutoCompleteRef, AutoCompleteProps>(({
                 suggestionsToFilter = result;
             } else if (externalSuggestions) {
                 suggestionsToFilter = externalSuggestions;
-            } else {
-                suggestionsToFilter = DEFAULT_AUTOCOMPLETE_SUGGESTIONS;
             }
+            //  else {
+            //     suggestionsToFilter = DEFAULT_AUTOCOMPLETE_SUGGESTIONS;
+            // }
 
             // 입력값과 매칭되는 단어들 필터링
             const filtered = suggestionsToFilter.filter(suggestion =>
