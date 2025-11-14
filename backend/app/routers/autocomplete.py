@@ -128,7 +128,7 @@ async def get_children_by_parent_id(parent_id: int):
         # parent_id가 일치하는 항목들 찾기
         children = [item for item in all_data if item.get('parent_id') == parent_id]
         
-        print(f"✅ parent_id={parent_id}인 자식 항목: {len(children)}개")
+        # print(f"✅ parent_id={parent_id}인 자식 항목: {len(children)}개")
         
         return {
             "success": True,

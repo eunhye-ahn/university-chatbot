@@ -137,11 +137,11 @@ const normalizeMessage = (text: string): React.ReactNode => {
 
 // 🔥 FAQ 데이터를 백엔드에서 가져오는 API 함수
 export const fetchFAQData = async (faqId: number): Promise<FAQResponse> => {
-    console.log('🔍 fetchFAQData 호출됨 - faqId:', faqId);
+    // console.log('🔍 fetchFAQData 호출됨 - faqId:', faqId);
 
     try {
         // 🔥 실제 백엔드 API 호출
-        console.log('📡 API 호출 시도:', `http://localhost:8000/api/faq/${faqId}`);
+        // console.log('📡 API 호출 시도:', `http://localhost:8000/api/faq/${faqId}`);
         const response = await fetch(`http://localhost:8000/api/faq/${faqId}`, {
             method: 'GET',
             headers: {
@@ -154,7 +154,7 @@ export const fetchFAQData = async (faqId: number): Promise<FAQResponse> => {
         }
 
         const result = await response.json();
-        console.log('✅ API 응답 성공:', result);
+        // console.log('✅ API 응답 성공:', result);
 
         if (!result.success) {
             throw new Error(result.message || 'FAQ 데이터를 가져올 수 없습니다.');
@@ -205,10 +205,10 @@ export const getFAQBasicInfo = (faqId: number): FAQItem | null => {
 };
 
 export const validateFAQData = () => {
-    console.log('🔍 FAQ_ITEMS 검증:', FAQ_ITEMS);
-    console.log('🔍 사용 가능한 FAQ ID들:', FAQ_ITEMS.map(item => item.id));
+    // console.log('🔍 FAQ_ITEMS 검증:', FAQ_ITEMS);
+    // console.log('🔍 사용 가능한 FAQ ID들:', FAQ_ITEMS.map(item => item.id));
 
     FAQ_ITEMS.forEach(item => {
-        console.log(`FAQ ${item.id}: ${item.title} (타입: ${typeof item.id})`);
+        // console.log(`FAQ ${item.id}: ${item.title} (타입: ${typeof item.id})`);
     });
 };

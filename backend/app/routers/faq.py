@@ -17,13 +17,13 @@ def load_faq_data() -> List[Dict[Any, Any]]:
     """
     faq.json 파일 로드
     """
-    print(f"📂 FAQ JSON 파일 로드: {JSON_FILE_PATH}")
+    # print(f"📂 FAQ JSON 파일 로드: {JSON_FILE_PATH}")
     
     try:
         with open(JSON_FILE_PATH, 'r', encoding='utf-8') as f:
             data = json.load(f)
         
-        print(f"📊 전체 FAQ 데이터: {len(data)}개")
+        # print(f"📊 전체 FAQ 데이터: {len(data)}개")
         return data
         
     except FileNotFoundError:
@@ -56,7 +56,7 @@ async def get_faq_by_id(faq_id: int):
                 "data": None
             }
         
-        print(f"✅ FAQ {faq_id} 찾음: {faq_item.get('question', 'Unknown')}")
+        # print(f"✅ FAQ {faq_id} 찾음: {faq_item.get('question', 'Unknown')}")
         
         # 자식 질문들도 함께 가져오기
         children = [item for item in data if item.get('parent_id') == faq_id]
