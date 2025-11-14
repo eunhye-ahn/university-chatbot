@@ -19,8 +19,6 @@ class EquivalentCourseServiceOptimized:
         """앱 시작 시 모든 동일대체 정보를 메모리에 로드"""
         if self._is_loaded:
             return
-            
-        print("🔄 동일대체 정보 로딩 중...")
         
         try:
             result = supabase.table('equivalent_courses')\
@@ -58,7 +56,6 @@ class EquivalentCourseServiceOptimized:
                 self._course_chains[code] = chain
             
             self._is_loaded = True
-            print(f"✅ 동일대체 정보 로드 완료: {len(self._equivalents_cache)}개")
             
         except Exception as e:
             print(f"❌ 동일대체 정보 로드 실패: {e}")
