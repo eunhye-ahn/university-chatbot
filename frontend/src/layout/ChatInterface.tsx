@@ -223,8 +223,8 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
                     : undefined  // ✅ children 추가
             };
 
-            console.log('📊 FAQ 응답 데이터:', faqData);
-            console.log('📊 생성된 봇 메시지:', botMessage);
+            // console.log('📊 FAQ 응답 데이터:', faqData);
+            // console.log('📊 생성된 봇 메시지:', botMessage);
 
             setMessages([...messagesWithUser, botMessage]);
 
