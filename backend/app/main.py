@@ -4,6 +4,7 @@ FastAPI 메인 애플리케이션 - 통합 버전
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime
+import asyncio
 from contextlib import asynccontextmanager
 
 from app.config import settings
@@ -32,9 +33,19 @@ async def lifespan(app: FastAPI):
     print(f"📍 환경: {settings.environment}")
     print(f"🤖 LLM 모델: {settings.model_name}")
     
+    async def cleanup_old_sessions():
+        while True:
+            await asyncio.sleep(1800)  # 30분마다
+            deleted = session_store.clear_old_sessions(hours=1)  # 1시간 미사용
+            if deleted > 0:
+                print(f"🗑️ 오래된 세션 {deleted}개 정리됨")
+    
+    cleanup_task = asyncio.create_task(cleanup_old_sessions())
+    
     yield
     
     # 종료 시
+    cleanup_task.cancel()
     print("👋 애플리케이션 종료")
 
 
@@ -94,6 +105,10 @@ async def chat(request: ChatRequest):
         
         # 세션 관리
         session_id = request.session_id
+        
+        print(f"  📨 받은 session_id: {session_id}")
+        print(f"  📊 현재 저장된 세션 수: {len(session_store.sessions)}")
+        print(f"  📋 저장된 세션 목록: {list(session_store.sessions.keys())}")
         
         if not session_id:
             session_id = session_store.create_session(None)

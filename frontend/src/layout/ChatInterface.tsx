@@ -58,7 +58,10 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
     const [isTyping, setIsTyping] = useState(false);
     const [showFAQ, setShowFAQ] = useState(false);
     const [autoInput, setAutoInput] = useState(false);
-    const elementRef = useRef<HTMLDivElement>(null);
+    const [sessionId, setSessionId] = useState(() => {
+        const id = crypto.randomUUID() as string;
+        return id;
+    });
 
    
     const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -88,17 +91,13 @@ const ChatInterface = ({ messages, setMessages }: ChatInterfaceProps) => {
         setIsTyping(true);
 
         try {
-            const storedSessionId = sessionStorage.getItem('chat_session_id');
-            
-            // 🔥 getDetailedChatbotResponse 사용 (전체 응답 객체 반환)
             const response = await ChatbotService.getDetailedChatbotResponse(userMessage, {
-                sessionId: storedSessionId ?? undefined
+                sessionId: sessionId
             });
 
-            // 세션 ID 저장
-            if (response.session_id) {
-                sessionStorage.setItem('chat_session_id', response.session_id);
-                console.log('💾 세션 ID 저장:', response.session_id);
+            if (response.session_id && response.session_id !== sessionId) {
+                console.log('🔄 세션 ID 업데이트:', sessionId, '→', response.session_id);
+                setSessionId(response.session_id);
             }
 
             // 메시지 추가
